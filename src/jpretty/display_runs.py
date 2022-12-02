@@ -3,6 +3,7 @@ import itertools
 import json
 import sys
 
+from rich.console import Console
 
 class DatetimeBucketer:
     def __init__(self, window):
@@ -32,6 +33,7 @@ class DatetimeBucketer:
         return dt
 
 bucketer = DatetimeBucketer(5)
+console = Console(highlight=False)
 
 def run_group_key(run_data):
     return (
@@ -42,11 +44,18 @@ def run_group_key(run_data):
 
 def run_sort_key(run_data):
     return (
-        run_data["startedAt"],
+        bucketer.defuzz(run_data["startedAt"]),
         run_data["headSha"],
         run_data["event"],
         run_data["workflowName"],
     )
+
+class DictAttr:
+    def __init__(self, d):
+        self.d = d
+
+    def __getattr__(self, name):
+        return self.d[name]
 
 def main():
     runs = json.load(sys.stdin)
@@ -56,10 +65,26 @@ def main():
     runs.sort(key=run_sort_key, reverse=True)
     for k, g in itertools.groupby(runs, key=run_group_key):
         runs = list(g)
-        r0 = runs[0]
-        print(r0["event"], r0["displayTitle"], r0["headBranch"], r0["startedAt"])
+        _ = DictAttr(runs[0])
+        console.print(
+            f"[white b]{_.displayTitle}[/] " +
+            f"{_.headBranch} " +
+            f"\\[{_.event}] " +
+            f"  [dim]{_.startedAt}[/]"
+        )
         for r in runs:
-            print("   ", r["status"], r["conclusion"], r["url"])
+            _ = DictAttr(r)
+            cstyles = {
+                "success": "green bold",
+                "failure": "red bold",
+            }
+            console.print(
+                f"   " +
+                f"{_.status} " +
+                f"[{cstyles.get(_.conclusion, 'default')}]{_.conclusion:10}[/] " +
+                f"{_.workflowName:20} " +
+                f"  [blue link={_.url}]view[/]"
+            )
 
 
 if __name__ == "__main__":
