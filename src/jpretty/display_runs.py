@@ -1,3 +1,6 @@
+# More hacking on making nice output for GitHub action runs
+#
+#
 import datetime
 import itertools
 import json
@@ -67,7 +70,7 @@ def main():
         runs = list(g)
         _ = DictAttr(runs[0])
         console.print(
-            f"[white b]{_.displayTitle}[/] " +
+            f"[white bold]{_.displayTitle}[/] " +
             f"{_.headBranch} " +
             f"\\[{_.event}] " +
             f"  [dim]{_.startedAt}[/]"
@@ -80,7 +83,7 @@ def main():
             }
             console.print(
                 f"   " +
-                f"{_.status} " +
+                f"{_.status:12} " +
                 f"[{cstyles.get(_.conclusion, 'default')}]{_.conclusion:10}[/] " +
                 f"{_.workflowName:20} " +
                 f"  [blue link={_.url}]view[/]"
