@@ -53,6 +53,14 @@ def run_sort_key(run_data):
         run_data["workflowName"],
     )
 
+def nice_time(dt):
+    dt = dt.astimezone()
+    now = datetime.datetime.now()
+    if dt.date() != now.date():
+        return dt.strftime("%m-%d %I:%M%p").lower()
+    else:
+        return dt.strftime("%I:%M%p").lower()
+
 class DictAttr:
     def __init__(self, d):
         self.d = d
@@ -73,7 +81,7 @@ def main():
             f"[white bold]{_.displayTitle}[/] " +
             f"{_.headBranch} " +
             f"\\[{_.event}] " +
-            f"  [dim]{_.startedAt}[/]"
+            f"  [dim]{_.headSha:.12}  @{nice_time(_.startedAt)}[/]"
         )
         for r in runs:
             _ = DictAttr(r)
@@ -86,7 +94,7 @@ def main():
                 f"{_.status:12} " +
                 f"[{cstyles.get(_.conclusion, 'default')}]{_.conclusion:10}[/] " +
                 f"{_.workflowName:20} " +
-                f"  [blue link={_.url}]view[/]"
+                f"  [blue link={_.url}]view {_.url.split('/')[-1]}[/]"
             )
 
 
