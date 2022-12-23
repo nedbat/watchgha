@@ -74,7 +74,9 @@ def main():
         run["startedAt"] = datetime.datetime.fromisoformat(run["startedAt"])
 
     runs.sort(key=run_sort_key, reverse=True)
-    for k, g in itertools.groupby(runs, key=run_group_key):
+    for i, (k, g) in enumerate(itertools.groupby(runs, key=run_group_key)):
+        if i == 1:
+            console.print()
         runs = list(g)
         _ = DictAttr(runs[0])
         console.print(
