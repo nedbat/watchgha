@@ -20,8 +20,8 @@ dist: 	## Build the distributions.
 test_pypi: ## Upload the distributions to PyPI's testing server.
 	python -m twine upload --verbose --repository testpypi dist/*
 
-pypi: ## Upload the built distributions to PyPI.
+pypi:	## Upload the built distributions to PyPI.
 	python -m twine upload --verbose dist/*
 
-pipx: ## Install locally as a command
+pipx:	## Install locally as a command
 	pipx install --python python3.11 -e .
