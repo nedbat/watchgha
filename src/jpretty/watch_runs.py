@@ -18,12 +18,14 @@ URL = f"https://api.github.com/repos/{REPO}/actions/runs?per_page=20&branch={BRA
 bucketer = DatetimeBucketer(5)
 console = Console(highlight=False)
 
+
 def run_group_key(run_data):
     return (
         bucketer.defuzz(run_data["started_dt"]),
         run_data["head_sha"],
         run_data["event"],
     )
+
 
 def run_sort_key(run_data):
     return (
@@ -33,7 +35,9 @@ def run_sort_key(run_data):
         run_data["name"],
     )
 
+
 SAVE_JSON = int(os.environ.get("SAVE_JSON", "0"))
+
 
 class Http:
     def __init__(self):
@@ -47,7 +51,9 @@ class Http:
                 json.dump(data, jout, indent=4)
         return data
 
+
 http = Http()
+
 
 def main():
     runs = http.get_json(URL)
@@ -66,10 +72,10 @@ def main():
             continue
         _ = DictAttr(these_runs[0])
         console.print(
-            f"[white bold]{_.display_title}[/] " +
-            f"{_.head_branch} " +
-            f"\\[{_.event}] " +
-            f"  [dim]{_.head_sha:.12}  @{nice_time(_.started_dt)}[/]"
+            f"[white bold]{_.display_title}[/] "
+            + f"{_.head_branch} "
+            + f"\\[{_.event}] "
+            + f"  [dim]{_.head_sha:.12}  @{nice_time(_.started_dt)}[/]"
         )
         for r in these_runs:
             _ = DictAttr(r)
@@ -78,11 +84,11 @@ def main():
                 "failure": "red bold",
             }
             console.print(
-                f"   " +
-                f"{_.status:12} " +
-                f"[{cstyles.get(_.conclusion, 'default')}]{_.conclusion or '':10}[/] " +
-                f"{_.name:20} " +
-                f"  [blue link={_.html_url}]view {_.url.split('/')[-1]}[/]"
+                f"   "
+                + f"{_.status:12} "
+                + f"[{cstyles.get(_.conclusion, 'default')}]{_.conclusion or '':10}[/] "
+                + f"{_.name:20} "
+                + f"  [blue link={_.html_url}]view {_.url.split('/')[-1]}[/]"
             )
 
             jobs = http.get_json(r["jobs_url"])["jobs"]
@@ -94,7 +100,10 @@ def main():
                 else:
                     steps = j["steps"]
                     for i, step in enumerate(steps):
-                        if step["status"] == "completed" and step["conclusion"] == "failure":
+                        if (
+                            step["status"] == "completed"
+                            and step["conclusion"] == "failure"
+                        ):
                             current_step = f"{i+1}/{len(steps)}: {step['name']}"
                             style = cstyles["failure"]
                             break
