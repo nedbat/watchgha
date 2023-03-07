@@ -55,6 +55,29 @@ class Http:
 http = Http()
 
 
+CSTYLES = {
+    "success": "green bold",
+    "failure": "red bold",
+}
+
+CICONS = {
+    "pending": "\N{TIMER CLOCK}",
+    "queued": "\N{TIMER CLOCK}",
+    "in_progress": "\N{CLOCKWISE OPEN CIRCLE ARROW}",
+    "success": "\N{CHECK MARK}",
+    "failure": "\N{BALLOT X}",
+}
+
+
+def summary_style_icon(data):
+    summary = data["status"]
+    if summary == "completed":
+        summary = data["conclusion"]
+    style = CSTYLES.get(summary, "default")
+    icon = CICONS.get(summary, " ")
+    return summary, style, icon
+
+
 def main():
     runs = http.get_json(URL)
     runs = runs["workflow_runs"]
@@ -79,22 +102,17 @@ def main():
         )
         for r in these_runs:
             _ = DictAttr(r)
-            cstyles = {
-                "success": "green bold",
-                "failure": "red bold",
-            }
+            summary, style, icon = summary_style_icon(r)
             console.print(
                 f"   "
-                + f"{_.status:12} "
-                + f"[{cstyles.get(_.conclusion, 'default')}]{_.conclusion or '':10}[/] "
-                + f"{_.name:20} "
-                + f"  [blue link={_.html_url}]view {_.url.split('/')[-1]}[/]"
+                + f"[{style}]{icon} {summary:12}[/] "
+                + f"[white bold]{_.name:16}[/] "
+                + f"  [blue link={_.html_url}]view {_.html_url.split('/')[-1]}[/]"
             )
 
             jobs = http.get_json(r["jobs_url"])["jobs"]
             for j in jobs:
-                current_step = "---"
-                style = "default"
+                current_step, style, icon = summary_style_icon(j)
                 if j["status"] == "queued":
                     current_step = "queued"
                 else:
@@ -105,17 +123,15 @@ def main():
                             and step["conclusion"] == "failure"
                         ):
                             current_step = f"{i+1}/{len(steps)}: {step['name']}"
-                            style = cstyles["failure"]
                             break
                         if step["status"] == "in_progress":
                             current_step = f"{i+1}/{len(steps)}: {step['name']}"
                             break
                     else:
                         current_step = steps[-1]["name"]
-                        style = cstyles["success"]
 
                 _ = DictAttr(j)
-                console.print(f"      {_.name:30} [{style}]{current_step}[/]")
+                console.print(f"      {_.name:30} [{style}]{icon} {current_step}[/]")
 
         run_names_seen.update(these_runs_names)
 
