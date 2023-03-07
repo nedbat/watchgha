@@ -21,6 +21,7 @@ classifiers = [
 requires-python = ">= 3.11"
 
 dependencies = [
+    "requests",
     "rich",
 ]
 
@@ -32,6 +33,7 @@ dynamic = ["version"]
 
 [project.scripts]
 display_runs = "jpretty.display_runs:main"
+watch_runs = "jpretty.watch_runs:main"
 
 [tool.setuptools.dynamic]
 version.attr = "jpretty.__version__"
