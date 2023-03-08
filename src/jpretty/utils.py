@@ -5,9 +5,13 @@ def nice_time(dt):
     dt = dt.astimezone()
     now = datetime.datetime.now()
     if dt.date() != now.date():
-        return dt.strftime("%m-%d %I:%M%p").lower()
+        if dt.year != now.year:
+            fmt = "%Y-%m-%d %I:%M%p"
+        else:
+            fmt = "%m-%d %I:%M%p"
     else:
-        return dt.strftime("%I:%M%p").lower()
+        fmt = "%I:%M%p"
+    return dt.strftime(fmt).lower()
 
 
 class DictAttr:

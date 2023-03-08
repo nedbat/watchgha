@@ -2,6 +2,8 @@ import datetime
 import itertools
 import json
 import os
+import re
+import sys
 
 import requests
 from rich.console import Console
@@ -9,11 +11,6 @@ from rich.console import Console
 from .bucketer import DatetimeBucketer
 from .utils import nice_time, DictAttr
 
-
-REPO = "nedbat/coveragepy"
-BRANCH = "nedbat/test"
-
-URL = f"https://api.github.com/repos/{REPO}/actions/runs?per_page=20&branch={BRANCH}"
 
 bucketer = DatetimeBucketer(5)
 console = Console(highlight=False)
@@ -68,6 +65,14 @@ CICONS = {
     "failure": "\N{BALLOT X}",
 }
 
+STEPDOTS = {
+    "success": "[green]\N{BULLET}[/]",
+    "failure": "[red]\N{BULLET}[/]",
+    "skipped": "[default]\N{WHITE BULLET}[/]",
+    "in_progress": "[white]\N{BULLET}[/]",
+    "queued": "[dim white]\N{BULLET}[/]",
+}
+
 
 def summary_style_icon(data):
     summary = data["status"]
@@ -79,19 +84,30 @@ def summary_style_icon(data):
 
 
 def main():
-    runs = http.get_json(URL)
+    repo_url, branch_name = sys.argv[1:]
+    # repo_url = "https://github.com/nedbat/coveragepy.git"
+    m = re.fullmatch(r"https://github.com/(\w+/\w+)\.git", repo_url)
+
+    url = f"https://api.github.com/repos/{m[1]}/actions/runs?per_page=20&branch={branch_name}"
+
+    runs = http.get_json(url)
     runs = runs["workflow_runs"]
 
     for run in runs:
         run["started_dt"] = datetime.datetime.fromisoformat(run["run_started_at"])
 
     runs.sort(key=run_sort_key, reverse=True)
-    run_names_seen = set()
+    run_names_seen = {"Cancel"}
 
     for _, g in itertools.groupby(runs, key=run_group_key):
         these_runs = list(g)
         these_runs_names = set(r["name"] for r in these_runs)
         if not (these_runs_names - run_names_seen):
+            continue
+        days_old = (
+            datetime.datetime.now(datetime.timezone.utc) - these_runs[0]["started_dt"]
+        ).days
+        if days_old > 7:
             continue
         _ = DictAttr(these_runs[0])
         console.print(
@@ -110,31 +126,38 @@ def main():
                 + f"  [blue link={_.html_url}]view {_.html_url.split('/')[-1]}[/]"
             )
 
-            jobs = http.get_json(r["jobs_url"])["jobs"]
-            for j in jobs:
-                current_step, style, icon = summary_style_icon(j)
-                if j["status"] == "queued":
-                    current_step = "queued"
-                else:
-                    steps = j["steps"]
-                    for i, step in enumerate(steps):
-                        if (
-                            step["status"] == "completed"
-                            and step["conclusion"] == "failure"
-                        ):
-                            current_step = f"{i+1}/{len(steps)}: {step['name']}"
-                            break
-                        if step["status"] == "in_progress":
-                            current_step = f"{i+1}/{len(steps)}: {step['name']}"
-                            break
-                    else:
-                        current_step = steps[-1]["name"]
+            if summary != "success":
+                jobs = http.get_json(r["jobs_url"])["jobs"]
+                for j in jobs:
+                    current_step, style, icon = summary_style_icon(j)
+                    stepdots = ""
+                    if current_step != "success":
+                        if j["status"] == "queued":
+                            current_step = "queued"
+                        else:
+                            steps = j["steps"]
+                            for step in steps:
+                                if (
+                                    step["status"] == "completed"
+                                    and step["conclusion"] == "failure"
+                                ):
+                                    current_step = f" {step['name']}"
+                                    break
+                                if step["status"] == "in_progress":
+                                    stepdots = ""
+                                    for s in steps:
+                                        ssum = summary_style_icon(s)[0]
+                                        stepdots += STEPDOTS.get(ssum, ssum)
+                                    current_step = f" {step['name']}"
+                                    break
+                            else:
+                                current_step = steps[-1]["name"]
 
-                _ = DictAttr(j)
-                console.print(f"      {_.name:30} [{style}]{icon} {current_step}[/]")
+                    _ = DictAttr(j)
+                    console.print(
+                        f"      "
+                        + f"{_.name:30} [{style}]{icon}[/] "
+                        + f"{stepdots}[{style}]{current_step}[/]"
+                    )
 
         run_names_seen.update(these_runs_names)
-
-
-if __name__ == "__main__":
-    main()
