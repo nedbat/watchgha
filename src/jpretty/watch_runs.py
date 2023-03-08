@@ -4,6 +4,7 @@ import json
 import os
 import re
 import sys
+import time
 
 import requests
 from rich.console import Console
@@ -89,7 +90,17 @@ def main():
     m = re.fullmatch(r"https://github.com/(\w+/\w+)\.git", repo_url)
 
     url = f"https://api.github.com/repos/{m[1]}/actions/runs?per_page=20&branch={branch_name}"
+    with console.screen():
+        while True:
+            console.clear()
+            done = draw_runs(url)
+            time.sleep(1)
+            if done:
+                break
+    draw_runs(url)
 
+
+def draw_runs(url):
     runs = http.get_json(url)
     runs = runs["workflow_runs"]
 
@@ -99,6 +110,7 @@ def main():
     runs.sort(key=run_sort_key, reverse=True)
     run_names_seen = {"Cancel"}
 
+    done = True
     for _, g in itertools.groupby(runs, key=run_group_key):
         these_runs = list(g)
         these_runs_names = set(r["name"] for r in these_runs)
@@ -134,6 +146,7 @@ def main():
                     if current_step != "success":
                         if j["status"] == "queued":
                             current_step = "queued"
+                            done = False
                         else:
                             steps = j["steps"]
                             for step in steps:
@@ -144,6 +157,7 @@ def main():
                                     current_step = f" {step['name']}"
                                     break
                                 if step["status"] == "in_progress":
+                                    done = False
                                     stepdots = ""
                                     for s in steps:
                                         ssum = summary_style_icon(s)[0]
@@ -161,3 +175,5 @@ def main():
                     )
 
         run_names_seen.update(these_runs_names)
+
+    return done
