@@ -64,6 +64,7 @@ CICONS = {
     "in_progress": "\N{CLOCKWISE OPEN CIRCLE ARROW}",
     "success": "\N{CHECK MARK}",
     "failure": "\N{BALLOT X}",
+    "cancelled": "\N{DAGGER}",
 }
 
 STEPDOTS = {
@@ -87,17 +88,30 @@ def summary_style_icon(data):
 def main():
     repo_url, branch_name = sys.argv[1:]
     # repo_url = "https://github.com/nedbat/coveragepy.git"
-    m = re.fullmatch(r"https://github.com/(\w+/\w+)\.git", repo_url)
+    m = re.fullmatch(r"https://github.com/([^/]+/[^/]+)\.git", repo_url)
 
     url = f"https://api.github.com/repos/{m[1]}/actions/runs?per_page=20&branch={branch_name}"
-    with console.screen():
-        while True:
-            console.clear()
+
+    output = ""
+    done = False
+
+    def doit():
+        nonlocal output, done
+        with console.capture() as capture:
             done = draw_runs(url)
-            time.sleep(1)
-            if done:
-                break
-    draw_runs(url)
+        output = capture.get()
+
+    try:
+        doit()
+        if not done:
+            with console.screen() as screen:
+                while not done:
+                    screen.update(output)
+                    time.sleep(1)
+                    doit()
+    except KeyboardInterrupt:
+        pass
+    print(output)
 
 
 def draw_runs(url):
@@ -131,6 +145,8 @@ def draw_runs(url):
         for r in these_runs:
             _ = DictAttr(r)
             summary, style, icon = summary_style_icon(r)
+            if summary not in ["success", "failure", "cancelled"]:
+                done = False
             console.print(
                 f"   "
                 + f"[{style}]{icon} {summary:12}[/] "
