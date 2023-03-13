@@ -17,7 +17,7 @@ import time
 from rich.console import Console
 
 from .bucketer import DatetimeBucketer
-from .utils import get_json, nice_time, DictAttr
+from .utils import get_json, nice_time, to_datetime, DictAttr
 
 
 bucketer = DatetimeBucketer(5)
@@ -108,7 +108,7 @@ def draw_runs(url):
     runs = runs["workflow_runs"]
 
     for run in runs:
-        run["started_dt"] = datetime.datetime.fromisoformat(run["run_started_at"])
+        run["started_dt"] = to_datetime(run["run_started_at"])
 
     runs.sort(key=run_sort_key, reverse=True)
     run_names_seen = {"Cancel"}
