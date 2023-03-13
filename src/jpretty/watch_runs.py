@@ -1,16 +1,23 @@
+"""
+Use the GitHub API to show the status of current GitHub Action runs on a
+specific branch.
+
+It tries to show enough runs to see the latest status of each workflow.  Runs
+older than a week are not considered.
+
+"""
+
 import datetime
 import itertools
 import json
-import os
 import re
 import sys
 import time
 
-import requests
 from rich.console import Console
 
 from .bucketer import DatetimeBucketer
-from .utils import nice_time, DictAttr
+from .utils import get_json, nice_time, DictAttr
 
 
 bucketer = DatetimeBucketer(5)
@@ -34,23 +41,6 @@ def run_sort_key(run_data):
     )
 
 
-SAVE_JSON = int(os.environ.get("SAVE_JSON", "0"))
-
-
-class Http:
-    def __init__(self):
-        self.count = itertools.count()
-
-    def get_json(self, url):
-        resp = requests.get(url)
-        data = resp.json()
-        if SAVE_JSON:
-            with open(f"get_{next(self.count):03d}.json", "w") as jout:
-                json.dump(data, jout, indent=4)
-        return data
-
-
-http = Http()
 
 
 CSTYLES = {
@@ -89,8 +79,7 @@ def main():
     repo_url, branch_name = sys.argv[1:]
     # repo_url = "https://github.com/nedbat/coveragepy.git"
     m = re.fullmatch(r"https://github.com/([^/]+/[^/]+)\.git", repo_url)
-
-    url = f"https://api.github.com/repos/{m[1]}/actions/runs?per_page=20&branch={branch_name}"
+    url = f"https://api.github.com/repos/{m[1]}/actions/runs?per_page=40&branch={branch_name}"
 
     output = ""
     done = False
@@ -111,11 +100,11 @@ def main():
                     doit()
     except KeyboardInterrupt:
         pass
-    print(output)
+    print(output, end="")
 
 
 def draw_runs(url):
-    runs = http.get_json(url)
+    runs = get_json(url)
     runs = runs["workflow_runs"]
 
     for run in runs:
@@ -155,7 +144,7 @@ def draw_runs(url):
             )
 
             if summary != "success":
-                jobs = http.get_json(r["jobs_url"])["jobs"]
+                jobs = get_json(r["jobs_url"])["jobs"]
                 for j in jobs:
                     current_step, style, icon = summary_style_icon(j)
                     stepdots = ""
@@ -170,7 +159,7 @@ def draw_runs(url):
                                     step["status"] == "completed"
                                     and step["conclusion"] == "failure"
                                 ):
-                                    current_step = f" {step['name']}"
+                                    current_step = f"failure {step['name']}"
                                     break
                                 if step["status"] == "in_progress":
                                     done = False

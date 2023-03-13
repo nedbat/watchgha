@@ -1,6 +1,7 @@
 *.pyc
 *.pyo
 get_*.json
+get_index.txt
 
 *.egg-info/
 build/
