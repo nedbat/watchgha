@@ -36,8 +36,11 @@ Display
 =======
 
 The output shows runs and jobs.  The current step of each job is shown, with a
-row of bullets indicating the number of steps, and which is current (sorry, not
-showing color here)::
+row of bullets indicating the number of steps, and which is current:
+
+.. image:: https://nedbatchelder.com/pix/watchgha.png
+
+.. code-block::
 
     fix: recent pypy3.9 now omits lines after jumps nedbat/fix-pypy-nightly    53923268e8f9  @08:32am
     ⏲ queued       Tests             view 4397455341
