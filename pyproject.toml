@@ -1,6 +1,6 @@
 [project]
-name = "jpretty"
-description = "Playing with nicer display of JSON data"
+name = "watchgha"
+description = "Watch GitHub action runs"
 
 readme = "README.rst"
 
@@ -11,7 +11,7 @@ authors = [
 license.text = "Apache-2.0"
 
 classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
+    "Development Status :: 5 - Production/Stable",
     "License :: OSI Approved :: Apache Software License",
     "Programming Language :: Python",
     "Programming Language :: Python :: 3",
@@ -27,16 +27,15 @@ dependencies = [
 
 dynamic = ["version"]
 
-#[project.urls]
-#"Source code" = "https://github.com/nedbat/jpretty"
-#"Issue tracker" = "https://github.com/nedbat/jpretty/issues"
+[project.urls]
+"Source code" = "https://github.com/nedbat/watchgha"
+"Issue tracker" = "https://github.com/nedbat/watchgha/issues"
 
 [project.scripts]
-display_runs = "jpretty.display_runs:main"
-watch_runs = "jpretty.watch_runs:main"
+watch_gha_runs = "watchgha.watch_runs:main"
 
 [tool.setuptools.dynamic]
-version.attr = "jpretty.__version__"
+version.attr = "watchgha.__version__"
 
 [build-system]
 requires = ["setuptools"]
