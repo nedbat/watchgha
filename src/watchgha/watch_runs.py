@@ -85,8 +85,9 @@ def summary_style_icon(data):
 
 def main():
     repo_url, branch_name = sys.argv[1:]
-    # repo_url = "https://github.com/nedbat/coveragepy.git"
-    m = re.fullmatch(r"https://github.com/([^/]+/[^/]+?)(\.git|/)?", repo_url)
+    # repo_url = "https://github.com/owner/repo.git"
+    # repo_url = "git@github.com:someorg/somerepo.git"
+    m = re.fullmatch(r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?", repo_url)
     url = f"https://api.github.com/repos/{m[1]}/actions/runs?per_page=40&branch={branch_name}"
 
     output = ""
