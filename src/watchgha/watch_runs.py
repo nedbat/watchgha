@@ -88,6 +88,8 @@ def main():
     # repo_url = "https://github.com/owner/repo.git"
     # repo_url = "git@github.com:someorg/somerepo.git"
     m = re.fullmatch(r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?", repo_url)
+    if m is None:
+        raise Exception(f"Couldn't find GitHub repo from {repo_url!r}")
     url = f"https://api.github.com/repos/{m[1]}/actions/runs?per_page=40&branch={branch_name}"
 
     output = ""
