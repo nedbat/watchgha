@@ -41,11 +41,18 @@ def run_sort_key(run_data):
     )
 
 
-
-
 CSTYLES = {
     "success": "green bold",
     "failure": "red bold",
+    "startup_failure": "red bold",
+}
+
+# States that are finished.
+FINISHED = {
+    "success",
+    "failure",
+    "cancelled",
+    "startup_failure",
 }
 
 CICONS = {
@@ -55,6 +62,7 @@ CICONS = {
     "success": "\N{CHECK MARK}",
     "failure": "\N{BALLOT X}",
     "cancelled": "\N{DAGGER}",
+    "startup_failure": "\N{BALLOT X}",
 }
 
 STEPDOTS = {
@@ -134,7 +142,7 @@ def draw_runs(url):
         for r in these_runs:
             _ = DictAttr(r)
             summary, style, icon = summary_style_icon(r)
-            if summary not in ["success", "failure", "cancelled"]:
+            if summary not in FINISHED:
                 done = False
             console.print(
                 f"   "
