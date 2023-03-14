@@ -7,6 +7,8 @@ URL and a branch name, and displays the status of the latest GitHub Action runs
 on that branch.  If any of the runs are in progress, it will refresh the
 display each second with the current status.
 
+If you like, the name can be pronounced, "Watching? Ha!"
+
 
 Installation
 ============
@@ -112,6 +114,11 @@ Development
 
 The code is a bit messy and undocumented, and there are no tests.  If you want
 to change the code, open an issue and let's talk about it.
+
+Contributors:
+
+- Ned Batchelder
+- Hugo van Kemenade
 
 
 Back Story
