@@ -44,6 +44,7 @@ class Http:
 
     def get_json(self, url):
         resp = requests.get(url)
+        resp.raise_for_status()
         data = resp.json()
         if int(os.environ.get("SAVE_JSON", "0")):
             filename = f"get_{next(self.count):03d}.json"
