@@ -115,8 +115,8 @@ status::
 Changelog
 =========
 
-Unreleased
-----------
+0.5.0 – 2023-03-15
+------------------
 
 - Uses a ``GITHUB_TOKEN`` environment variable for authentication if it is
   defined.
