@@ -181,7 +181,10 @@ def draw_runs(url):
                                     current_step = f" {step['name']}"
                                     break
                             else:
-                                current_step = steps[-1]["name"]
+                                if steps:
+                                    current_step = steps[-1]["name"]
+                                else:
+                                    current_step = "-None-"
 
                     _ = DictAttr(j)
                     console.print(
