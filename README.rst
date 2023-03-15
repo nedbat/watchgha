@@ -33,6 +33,9 @@ so that my current repo and branch are implied:
 
 Now ``git runs`` will show a live display of the current runs on your branch.
 
+You can authenticate against GitHub if needed using either an entry in your
+.netrc file, or by setting the ``GITHUB_TOKEN`` environment variable.
+
 
 Display
 =======
@@ -111,6 +114,13 @@ status::
 
 Changelog
 =========
+
+Unreleased
+----------
+
+- Uses a ``GITHUB_TOKEN`` environment variable for authentication if it is
+  defined.
+
 
 0.0.2 – 2023-03-14
 ------------------

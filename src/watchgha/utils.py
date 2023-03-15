@@ -37,14 +37,20 @@ class Http:
     """
     Helper for getting JSON from URLs.
 
-    Define SAVE_JSON in the environment to save retrieved data in .json files.
-    """
+    Uses the GITHUB_TOKEN environment variable (if set) as authentication.
 
+    Define SAVE_JSON=1 in the environment to save retrieved data in .json files.
+
+    """
     def __init__(self):
         self.count = itertools.count()
 
     def get_json(self, url):
-        resp = requests.get(url)
+        headers = {}
+        token = os.environ.get("GITHUB_TOKEN", "")
+        if token:
+            headers["Authorization"] = f"Bearer {token}"
+        resp = requests.get(url, headers=headers)
         resp.raise_for_status()
         data = resp.json()
         if int(os.environ.get("SAVE_JSON", "0")):
