@@ -109,6 +109,23 @@ status::
         Python pypy-3.9-nightly        ✗ failure Run tox
 
 
+Changelog
+=========
+
+0.0.2 – 2023-03-14
+------------------
+
+- Support more forms of repo URLs: ``git@github.com:``, without ``.git``, etc.
+
+- Better error messages if the repo URL can't be parsed.
+
+
+0.0.1 – 2023-03-13
+------------------
+
+First version
+
+
 Development
 ===========
 
