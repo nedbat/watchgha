@@ -43,6 +43,7 @@ class Http:
     Define SAVE_JSON=1 in the environment to save retrieved data in .json files.
 
     """
+
     RETRY_STATUS_CODES = {502}
 
     def __init__(self):
@@ -58,7 +59,7 @@ class Http:
             resp = requests.get(url, headers=headers)
             if resp.status_code not in self.RETRY_STATUS_CODES:
                 break
-            time.sleep(.5)
+            time.sleep(0.5)
         resp.raise_for_status()
 
         data = resp.json()
