@@ -115,6 +115,12 @@ status::
 Changelog
 =========
 
+Unreleased
+----------
+
+- Retry if GitHub returns "502 - Bad Gateway".
+
+
 0.5.0 – 2023-03-15
 ------------------
 

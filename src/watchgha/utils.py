@@ -2,6 +2,7 @@ import datetime
 import itertools
 import json
 import os
+import time
 
 import requests
 
@@ -42,6 +43,8 @@ class Http:
     Define SAVE_JSON=1 in the environment to save retrieved data in .json files.
 
     """
+    RETRY_STATUS_CODES = {502}
+
     def __init__(self):
         self.count = itertools.count()
 
@@ -50,8 +53,14 @@ class Http:
         token = os.environ.get("GITHUB_TOKEN", "")
         if token:
             headers["Authorization"] = f"Bearer {token}"
-        resp = requests.get(url, headers=headers)
+
+        for _ in range(3):
+            resp = requests.get(url, headers=headers)
+            if resp.status_code not in self.RETRY_STATUS_CODES:
+                break
+            time.sleep(.5)
         resp.raise_for_status()
+
         data = resp.json()
         if int(os.environ.get("SAVE_JSON", "0")):
             filename = f"get_{next(self.count):03d}.json"
