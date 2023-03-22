@@ -25,6 +25,7 @@ classifiers = [
 requires-python = ">= 3.7"
 
 dependencies = [
+    "click",
     "requests",
     "rich",
 ]

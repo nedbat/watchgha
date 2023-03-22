@@ -118,6 +118,8 @@ Changelog
 Unreleased
 ----------
 
+- Runs can be selected by a commit SHA by using ``--sha`` on the command line.
+
 - Retry if GitHub returns "502 - Bad Gateway".
 
 

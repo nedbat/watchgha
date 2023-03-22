@@ -13,15 +13,17 @@ import json
 import re
 import sys
 import time
+import urllib.parse
 
-from rich.console import Console
+import click
+import rich.console
 
 from .bucketer import DatetimeBucketer
 from .utils import get_json, nice_time, to_datetime, DictAttr
 
 
 bucketer = DatetimeBucketer(5)
-console = Console(highlight=False)
+console = rich.console.Console(highlight=False)
 
 
 def run_group_key(run_data):
@@ -83,16 +85,28 @@ def summary_style_icon(data):
     return summary, style, icon
 
 
-def main():
-    repo_url, branch_name = sys.argv[1:]
+@click.command()
+@click.option("--sha", help="The commit SHA to use. Must be a full SHA.")
+@click.argument("repo_url")
+@click.argument("branch_name", required=False)
+def main(sha, repo_url, branch_name):
     # repo_url = "https://github.com/owner/repo.git"
     # repo_url = "git@github.com:someorg/somerepo.git"
-    m = re.fullmatch(
+    repo_match = re.fullmatch(
         r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?", repo_url
     )
-    if m is None:
+    if repo_match is None:
         raise Exception(f"Couldn't find GitHub repo from {repo_url!r}")
-    url = f"https://api.github.com/repos/{m[1]}/actions/runs?per_page=40&branch={branch_name}"
+
+    url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs"
+    params = {"per_page": "40"}
+
+    if branch_name:
+        params["branch"] = branch_name
+    elif sha:
+        params["head_sha"] = sha
+
+    url += "?" + urllib.parse.urlencode(params)
 
     output = ""
     done = False
