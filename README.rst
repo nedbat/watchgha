@@ -115,8 +115,8 @@ status::
 Changelog
 =========
 
-Unreleased
-----------
+0.6.0 – 2023-03-22
+------------------
 
 - Runs can be selected by a commit SHA by using ``--sha`` on the command line.
 
