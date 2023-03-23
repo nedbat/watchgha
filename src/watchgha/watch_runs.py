@@ -114,7 +114,7 @@ def main(sha, repo_url, branch_name):
     def doit():
         nonlocal output, done
         with console.capture() as capture:
-            done = draw_runs(url)
+            done = draw_runs(url, get_json, console.print)
         output = capture.get()
 
     try:
@@ -130,9 +130,23 @@ def main(sha, repo_url, branch_name):
     print(output, end="")
 
 
-def draw_runs(url):
-    runs = get_json(url)
-    runs = runs["workflow_runs"]
+def draw_runs(url, jsonfn, outfn):
+    # Workflow runs is a flat list of runs.  We bucket them by time started,
+    # sha, and event to create "events".  Each event has a number of runs, each
+    # run has a number of jobs, each job has a number of steps. They end up
+    # displayed as:
+    #
+    #   event-name sha, time
+    #       outcome run-name, url
+    #           job-name     current-step-or-outcome
+
+    events = get_events(url, jsonfn)
+    done = draw_events(events, outfn)
+    return done
+
+
+def get_events(url, jsonfn):
+    runs = jsonfn(url)["workflow_runs"]
 
     for run in runs:
         run["started_dt"] = to_datetime(run["run_started_at"])
@@ -140,75 +154,90 @@ def draw_runs(url):
     runs.sort(key=run_sort_key, reverse=True)
     run_names_seen = {"Cancel"}
 
-    done = True
+    events = []
+
     for _, g in itertools.groupby(runs, key=run_group_key):
-        these_runs = list(g)
-        these_runs_names = set(r["name"] for r in these_runs)
+        event_runs = list(g)
+        these_runs_names = set(run["name"] for run in event_runs)
         if not (these_runs_names - run_names_seen):
             continue
         days_old = (
-            datetime.datetime.now(datetime.timezone.utc) - these_runs[0]["started_dt"]
+            datetime.datetime.now(datetime.timezone.utc) - event_runs[0]["started_dt"]
         ).days
         if days_old > 7:
             continue
-        _ = DictAttr(these_runs[0])
-        console.print(
-            f"[white bold]{_.display_title}[/] "
-            + f"{_.head_branch} "
-            + f"\\[{_.event}] "
-            + f"  [dim]{_.head_sha:.12}  @{nice_time(_.started_dt)}[/]"
+
+        events.append(event_runs)
+        run_names_seen.update(these_runs_names)
+
+        for run in event_runs:
+            summary, _, _ = summary_style_icon(run)
+            if summary != "success":
+                run["jobs"] = jsonfn(run["jobs_url"])["jobs"]
+
+    return events
+
+
+def draw_events(events, outfn):
+    done = True
+    for event_runs in events:
+        e = DictAttr(event_runs[0])
+        outfn(
+            f"[white bold]{e.display_title}[/] "
+            + f"{e.head_branch} "
+            + f"\\[{e.event}] "
+            + f"  [dim]{e.head_sha:.12}  @{nice_time(e.started_dt)}[/]"
         )
-        for r in these_runs:
-            _ = DictAttr(r)
-            summary, style, icon = summary_style_icon(r)
+        for run in event_runs:
+            summary, style, icon = summary_style_icon(run)
             if summary not in FINISHED:
                 done = False
-            console.print(
+            r = DictAttr(run)
+            outfn(
                 f"   "
                 + f"[{style}]{icon} {summary:12}[/] "
-                + f"[white bold]{_.name:16}[/] "
-                + f"  [blue link={_.html_url}]view {_.html_url.split('/')[-1]}[/]"
+                + f"[white bold]{r.name:16}[/] "
+                + f"  [blue link={r.html_url}]view {r.html_url.split('/')[-1]}[/]"
             )
 
-            if summary != "success":
-                jobs = get_json(r["jobs_url"])["jobs"]
-                for j in jobs:
-                    current_step, style, icon = summary_style_icon(j)
-                    stepdots = ""
-                    if current_step != "success":
-                        if j["status"] == "queued":
-                            current_step = "queued"
-                            done = False
+            if summary == "success":
+                continue
+
+            for job in run["jobs"]:
+                current_step, style, icon = summary_style_icon(job)
+                stepdots = ""
+                if current_step != "success":
+                    if job["status"] == "queued":
+                        current_step = "queued"
+                        done = False
+                    else:
+                        steps = job["steps"]
+                        for step in steps:
+                            if (
+                                step["status"] == "completed"
+                                and step["conclusion"] == "failure"
+                            ):
+                                current_step = f"failure {step['name']}"
+                                break
+                            if step["status"] == "in_progress":
+                                done = False
+                                stepdots = ""
+                                for s in steps:
+                                    ssum = summary_style_icon(s)[0]
+                                    stepdots += STEPDOTS.get(ssum, ssum)
+                                current_step = f" {step['name']}"
+                                break
                         else:
-                            steps = j["steps"]
-                            for step in steps:
-                                if (
-                                    step["status"] == "completed"
-                                    and step["conclusion"] == "failure"
-                                ):
-                                    current_step = f"failure {step['name']}"
-                                    break
-                                if step["status"] == "in_progress":
-                                    done = False
-                                    stepdots = ""
-                                    for s in steps:
-                                        ssum = summary_style_icon(s)[0]
-                                        stepdots += STEPDOTS.get(ssum, ssum)
-                                    current_step = f" {step['name']}"
-                                    break
+                            if steps:
+                                current_step = steps[-1]["name"]
                             else:
-                                if steps:
-                                    current_step = steps[-1]["name"]
-                                else:
-                                    current_step = "-None-"
+                                current_step = "-None-"
 
-                    _ = DictAttr(j)
-                    console.print(
-                        f"      "
-                        + f"{_.name:30} [{style}]{icon}[/] "
-                        + f"{stepdots}[{style}]{current_step}[/]"
-                    )
-
-        run_names_seen.update(these_runs_names)
+                j = DictAttr(job)
+                outfn(
+                    f"      "
+                    + f"{j.name:30} [{style}]{icon}[/] "
+                    + f"{stepdots}[{style}]{current_step}[/]"
+                )
 
     return done
