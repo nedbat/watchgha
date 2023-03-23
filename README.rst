@@ -115,6 +115,12 @@ status::
 Changelog
 =========
 
+Unreleased
+----------
+
+- The exit code is now 1 if any runs failed, 0 if all were successful.
+
+
 0.6.0 – 2023-03-22
 ------------------
 

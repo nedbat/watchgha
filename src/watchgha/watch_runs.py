@@ -110,11 +110,12 @@ def main(sha, repo_url, branch_name):
 
     output = ""
     done = False
+    succeeded = False
 
     def doit():
-        nonlocal output, done
+        nonlocal output, done, succeeded
         with console.capture() as capture:
-            done = draw_runs(url, get_json, console.print)
+            done, succeeded = draw_runs(url, get_json, console.print)
         output = capture.get()
 
     try:
@@ -128,6 +129,7 @@ def main(sha, repo_url, branch_name):
     except KeyboardInterrupt:
         pass
     print(output, end="")
+    sys.exit(0 if succeeded else 1)
 
 
 def draw_runs(url, jsonfn, outfn):
@@ -141,8 +143,8 @@ def draw_runs(url, jsonfn, outfn):
     #           job-name     current-step-or-outcome
 
     events = get_events(url, jsonfn)
-    done = draw_events(events, outfn)
-    return done
+    done, succeeded = draw_events(events, outfn)
+    return done, succeeded
 
 
 def get_events(url, jsonfn):
@@ -180,6 +182,7 @@ def get_events(url, jsonfn):
 
 def draw_events(events, outfn):
     done = True
+    succeeded = True
     for event_runs in events:
         e = DictAttr(event_runs[0])
         outfn(
@@ -203,6 +206,7 @@ def draw_events(events, outfn):
             if summary == "success":
                 continue
 
+            succeeded = False
             for job in run["jobs"]:
                 current_step, style, icon = summary_style_icon(job)
                 stepdots = ""
@@ -240,4 +244,4 @@ def draw_events(events, outfn):
                     + f"{stepdots}[{style}]{current_step}[/]"
                 )
 
-    return done
+    return done, succeeded
