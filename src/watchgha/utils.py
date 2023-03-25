@@ -1,6 +1,6 @@
 import datetime
 import itertools
-import json
+import mimetypes
 import os
 import time
 
@@ -36,11 +36,11 @@ class DictAttr:
 
 class Http:
     """
-    Helper for getting JSON from URLs.
+    Helper for getting data from URLs.
 
     Uses the GITHUB_TOKEN environment variable (if set) as authentication.
 
-    Define SAVE_JSON=1 in the environment to save retrieved data in .json files.
+    Define SAVE_DATA=1 in the environment to save retrieved data in get_*.* files.
 
     """
 
@@ -49,7 +49,7 @@ class Http:
     def __init__(self):
         self.count = itertools.count()
 
-    def get_json(self, url):
+    def get_data(self, url):
         headers = {}
         token = os.environ.get("GITHUB_TOKEN", "")
         if token:
@@ -61,15 +61,20 @@ class Http:
                 break
             time.sleep(0.5)
         resp.raise_for_status()
-
-        data = resp.json()
-        if int(os.environ.get("SAVE_JSON", "0")):
-            filename = f"get_{next(self.count):03d}.json"
+        data = resp.text
+        if int(os.environ.get("SAVE_DATA", "0")):
+            ext = extension_for_content(resp)
+            filename = f"get_{next(self.count):03d}{ext}"
             with open("get_index.txt", "a") as index:
                 print(f"{filename}: {url}", file=index)
-            with open(filename, "w") as jout:
-                json.dump(data, jout, indent=4)
+            with open(filename, "w") as out:
+                out.write(data)
         return data
 
 
-get_json = Http().get_json
+def extension_for_content(response):
+    content_type = response.headers['content-type'].partition(';')[0].strip()
+    return mimetypes.guess_extension(content_type)
+
+
+get_data = Http().get_data

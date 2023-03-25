@@ -19,7 +19,7 @@ import click
 import rich.console
 
 from .bucketer import DatetimeBucketer
-from .utils import get_json, nice_time, to_datetime, DictAttr
+from .utils import get_data, nice_time, to_datetime, DictAttr
 
 
 bucketer = DatetimeBucketer(5)
@@ -115,7 +115,7 @@ def main(sha, repo_url, branch_name):
     def doit():
         nonlocal output, done, succeeded
         with console.capture() as capture:
-            done, succeeded = draw_runs(url, get_json, console.print)
+            done, succeeded = draw_runs(url, get_data, console.print)
         output = capture.get()
 
     try:
@@ -132,7 +132,7 @@ def main(sha, repo_url, branch_name):
     sys.exit(0 if succeeded else 1)
 
 
-def draw_runs(url, jsonfn, outfn):
+def draw_runs(url, datafn, outfn):
     # Workflow runs is a flat list of runs.  We bucket them by time started,
     # sha, and event to create "events".  Each event has a number of runs, each
     # run has a number of jobs, each job has a number of steps. They end up
@@ -142,13 +142,13 @@ def draw_runs(url, jsonfn, outfn):
     #       outcome run-name, url
     #           job-name     current-step-or-outcome
 
-    events = get_events(url, jsonfn)
+    events = get_events(url, datafn)
     done, succeeded = draw_events(events, outfn)
     return done, succeeded
 
 
-def get_events(url, jsonfn):
-    runs = jsonfn(url)["workflow_runs"]
+def get_events(url, datafn):
+    runs = json.loads(datafn(url))["workflow_runs"]
 
     for run in runs:
         run["started_dt"] = to_datetime(run["run_started_at"])
@@ -175,7 +175,7 @@ def get_events(url, jsonfn):
         for run in event_runs:
             summary, _, _ = summary_style_icon(run)
             if summary != "success":
-                run["jobs"] = jsonfn(run["jobs_url"])["jobs"]
+                run["jobs"] = json.loads(datafn(run["jobs_url"]))["jobs"]
 
     return events
 
