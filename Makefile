@@ -25,4 +25,4 @@ pypi:	## Upload the built distributions to PyPI.
 	python -m twine upload --verbose dist/*
 
 pipx:	## Install locally as a command
-	pipx install -e .
+	pipx install --force -e .

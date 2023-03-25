@@ -118,6 +118,8 @@ Changelog
 Unreleased
 ----------
 
+- Requests to GitHub are now made asynchronously, speeding execution.
+
 - The exit code is now 1 if any runs failed, 0 if all were successful.
 
 

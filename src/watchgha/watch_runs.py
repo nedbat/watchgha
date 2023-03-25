@@ -17,6 +17,7 @@ import urllib.parse
 
 import click
 import rich.console
+import trio
 
 from .bucketer import DatetimeBucketer
 from .utils import get_data, nice_time, to_datetime, DictAttr
@@ -142,42 +143,46 @@ def draw_runs(url, datafn, outfn):
     #       outcome run-name, url
     #           job-name     current-step-or-outcome
 
-    events = get_events(url, datafn)
+    events = trio.run(get_events, url, datafn)
     done, succeeded = draw_events(events, outfn)
     return done, succeeded
 
 
-def get_events(url, datafn):
-    runs = json.loads(datafn(url))["workflow_runs"]
+async def get_events(url, datafn):
+    runs = json.loads(await datafn(url))["workflow_runs"]
 
-    for run in runs:
-        run["started_dt"] = to_datetime(run["run_started_at"])
+    async with trio.open_nursery() as nursery:
+        for run in runs:
+            run["started_dt"] = to_datetime(run["run_started_at"])
 
-    runs.sort(key=run_sort_key, reverse=True)
-    run_names_seen = {"Cancel"}
+        runs.sort(key=run_sort_key, reverse=True)
+        run_names_seen = {"Cancel"}
 
-    events = []
+        events = []
 
-    for _, g in itertools.groupby(runs, key=run_group_key):
-        event_runs = list(g)
-        these_runs_names = set(run["name"] for run in event_runs)
-        if not (these_runs_names - run_names_seen):
-            continue
-        days_old = (
-            datetime.datetime.now(datetime.timezone.utc) - event_runs[0]["started_dt"]
-        ).days
-        if days_old > 7:
-            continue
+        for _, g in itertools.groupby(runs, key=run_group_key):
+            event_runs = list(g)
+            these_runs_names = set(run["name"] for run in event_runs)
+            if not (these_runs_names - run_names_seen):
+                continue
+            days_old = (
+                datetime.datetime.now(datetime.timezone.utc) - event_runs[0]["started_dt"]
+            ).days
+            if days_old > 7:
+                continue
 
-        events.append(event_runs)
-        run_names_seen.update(these_runs_names)
+            events.append(event_runs)
+            run_names_seen.update(these_runs_names)
 
-        for run in event_runs:
-            summary, _, _ = summary_style_icon(run)
-            if summary != "success":
-                run["jobs"] = json.loads(datafn(run["jobs_url"]))["jobs"]
+            async def load_run(run):
+                run["jobs"] = json.loads(await datafn(run["jobs_url"]))["jobs"]
 
-    return events
+            for run in event_runs:
+                summary, _, _ = summary_style_icon(run)
+                if summary != "success":
+                    nursery.start_soon(load_run, run)
+
+        return events
 
 
 def draw_events(events, outfn):

@@ -4,7 +4,7 @@ import mimetypes
 import os
 import time
 
-import requests
+import httpx
 
 
 def nice_time(dt):
@@ -43,33 +43,38 @@ class Http:
     Define SAVE_DATA=1 in the environment to save retrieved data in get_*.* files.
 
     """
+    # $set_env.py: SAVE_DATA - save all fetched data to get_* files.
 
     RETRY_STATUS_CODES = {502}
 
     def __init__(self):
-        self.count = itertools.count()
+        self.save = bool(int(os.environ.get("SAVE_DATA", "0")))
+        if self.save:
+            with open("get_index.txt", "w") as index:
+                print("# URLs fetched:", file=index)
+            self.count = itertools.count()
 
-    def get_data(self, url):
+    async def get_data(self, url):
         headers = {}
         token = os.environ.get("GITHUB_TOKEN", "")
         if token:
             headers["Authorization"] = f"Bearer {token}"
 
-        for _ in range(3):
-            resp = requests.get(url, headers=headers)
-            if resp.status_code not in self.RETRY_STATUS_CODES:
-                break
-            time.sleep(0.5)
-        resp.raise_for_status()
-        data = resp.text
-        if int(os.environ.get("SAVE_DATA", "0")):
-            ext = extension_for_content(resp)
-            filename = f"get_{next(self.count):03d}{ext}"
-            with open("get_index.txt", "a") as index:
-                print(f"{filename}: {url}", file=index)
-            with open(filename, "w") as out:
-                out.write(data)
-        return data
+        async with httpx.AsyncClient() as client:
+            for _ in range(3):
+                resp = await client.get(url, headers=headers)
+                if resp.status_code not in self.RETRY_STATUS_CODES:
+                    break
+            resp.raise_for_status()
+            data = resp.text
+            if self.save:
+                ext = extension_for_content(resp)
+                filename = f"get_{next(self.count):03d}{ext}"
+                with open("get_index.txt", "a") as index:
+                    print(f"{filename}: {url}", file=index)
+                with open(filename, "w") as out:
+                    out.write(data)
+            return data
 
 
 def extension_for_content(response):
