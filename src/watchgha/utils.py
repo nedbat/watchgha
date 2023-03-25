@@ -47,6 +47,7 @@ class Http:
     Define SAVE_DATA=1 in the environment to save retrieved data in get_*.* files.
 
     """
+
     # $set_env.py: SAVE_DATA - save all fetched data to get_* files.
 
     RETRY_STATUS_CODES = {502}
@@ -85,7 +86,7 @@ class Http:
 
 
 def extension_for_content(response):
-    content_type = response.headers['content-type'].partition(';')[0].strip()
+    content_type = response.headers["content-type"].partition(";")[0].strip()
     return mimetypes.guess_extension(content_type)
 
 

@@ -174,7 +174,8 @@ async def get_events(url, datafn):
             if not (these_runs_names - run_names_seen):
                 continue
             days_old = (
-                datetime.datetime.now(datetime.timezone.utc) - event_runs[0]["started_dt"]
+                datetime.datetime.now(datetime.timezone.utc)
+                - event_runs[0]["started_dt"]
             ).days
             if days_old > 7:
                 continue
