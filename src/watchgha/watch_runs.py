@@ -20,7 +20,7 @@ import rich.console
 import trio
 
 from .bucketer import DatetimeBucketer
-from .utils import get_data, nice_time, to_datetime, DictAttr
+from .utils import get_data, nice_time, to_datetime, DictAttr, WatchGhaError
 
 
 bucketer = DatetimeBucketer(5)
@@ -128,7 +128,15 @@ def main(sha, repo_url, branch_name):
                     time.sleep(1)
                     doit()
     except KeyboardInterrupt:
-        pass
+        print("** interrupted **")
+    except WatchGhaError as e:
+        orig = e.args[0]
+        msg = f"Error: {orig.__class__.__name__}"
+        if str(orig):
+            msg += f": {orig}"
+        print(msg)
+        sys.exit(2)
+
     print(output, end="")
     sys.exit(0 if succeeded else 1)
 

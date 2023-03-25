@@ -7,6 +7,10 @@ import time
 import httpx
 
 
+class WatchGhaError(Exception):
+    pass
+
+
 def nice_time(dt):
     dt = dt.astimezone()
     now = datetime.datetime.now()
@@ -62,7 +66,10 @@ class Http:
 
         async with httpx.AsyncClient() as client:
             for _ in range(3):
-                resp = await client.get(url, headers=headers)
+                try:
+                    resp = await client.get(url, headers=headers, timeout=30)
+                except httpx.HTTPError as e:
+                    raise WatchGhaError(e)
                 if resp.status_code not in self.RETRY_STATUS_CODES:
                     break
             resp.raise_for_status()
