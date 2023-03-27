@@ -26,6 +26,7 @@ requires-python = ">= 3.7"
 
 dependencies = [
     "click",
+    "exceptiongroup",
     "httpx",
     "rich",
     "trio",

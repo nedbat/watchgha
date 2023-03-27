@@ -16,6 +16,7 @@ import time
 import urllib.parse
 
 import click
+import exceptiongroup
 import rich.console
 import trio
 
@@ -119,7 +120,20 @@ def main(sha, repo_url, branch_name):
             done, succeeded = draw_runs(url, get_data, console.print)
         output = capture.get()
 
-    try:
+    watch_gha_errors = []
+
+    def handle_watchghaerror(excgroup):
+        watch_gha_errors.extend(excgroup.exceptions)
+
+    def handle_keyboardinterrupt(excgroup):
+        print("** interrupted **")
+
+    with exceptiongroup.catch(
+        {
+            WatchGhaError: handle_watchghaerror,
+            KeyboardInterrupt: handle_keyboardinterrupt,
+        }
+    ):
         doit()
         if not done:
             with console.screen() as screen:
@@ -127,10 +141,9 @@ def main(sha, repo_url, branch_name):
                     screen.update(output)
                     time.sleep(1)
                     doit()
-    except KeyboardInterrupt:
-        print("** interrupted **")
-    except WatchGhaError as e:
-        orig = e.args[0]
+
+    if watch_gha_errors:
+        orig = watch_gha_errors[0].args[0]
         msg = f"Error: {orig.__class__.__name__}"
         if str(orig):
             msg += f": {orig}"
