@@ -58,17 +58,16 @@ class Http:
             with open("get_index.txt", "w") as index:
                 print("# URLs fetched:", file=index)
             self.count = itertools.count()
-
-    async def get_data(self, url):
-        headers = {}
+        self.headers = {}
         token = os.environ.get("GITHUB_TOKEN", "")
         if token:
-            headers["Authorization"] = f"Bearer {token}"
+            self.headers["Authorization"] = f"Bearer {token}"
 
+    async def get_data(self, url):
         async with httpx.AsyncClient() as client:
             for _ in range(3):
                 try:
-                    resp = await client.get(url, headers=headers, timeout=30)
+                    resp = await client.get(url, headers=self.headers, timeout=30)
                 except httpx.HTTPError as e:
                     raise WatchGhaError(e)
                 if resp.status_code not in self.RETRY_STATUS_CODES:
