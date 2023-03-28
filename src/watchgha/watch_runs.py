@@ -8,6 +8,7 @@ older than a week are not considered.
 """
 
 import datetime
+import io
 import itertools
 import json
 import re
@@ -116,9 +117,11 @@ def main(sha, repo_url, branch_name):
 
     def doit():
         nonlocal output, done, succeeded
-        with console.capture() as capture:
-            done, succeeded = draw_runs(url, get_data, console.print)
-        output = capture.get()
+        stream = io.StringIO()
+        done, succeeded = draw_runs(
+            url, get_data, lambda s: print(s, file=stream),
+        )
+        output = stream.getvalue()
 
     watch_gha_errors = []
 
@@ -150,7 +153,7 @@ def main(sha, repo_url, branch_name):
         print(msg)
         sys.exit(2)
 
-    print(output, end="")
+    console.print(output, end="")
     sys.exit(0 if succeeded else 1)
 
 
