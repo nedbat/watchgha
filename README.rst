@@ -26,7 +26,7 @@ so that my current repo and branch are implied:
 
     [alias]
         runs = "!f() { \
-            watch_gha_runs \
+            watch_gha_runs $@ \
                 \"$(git remote get-url origin)\" \
                 \"$(git rev-parse --abbrev-ref HEAD)\"; \
         }; f"
@@ -117,6 +117,8 @@ Changelog
 
 Unreleased
 ----------
+
+- The ``--poll`` option sets the number of seconds to wait between refreshes.
 
 - Requests to GitHub are now made asynchronously, speeding execution.
 

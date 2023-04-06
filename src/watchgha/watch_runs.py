@@ -90,9 +90,16 @@ def summary_style_icon(data):
 
 @click.command()
 @click.option("--sha", help="The commit SHA to use. Must be a full SHA.")
+@click.option(
+    "--poll",
+    help="How many seconds between refreshes.",
+    type=int,
+    default=1,
+    show_default=True,
+)
 @click.argument("repo_url")
 @click.argument("branch_name", required=False)
-def main(sha, repo_url, branch_name):
+def main(sha, poll, repo_url, branch_name):
     # repo_url = "https://github.com/owner/repo.git"
     # repo_url = "git@github.com:someorg/somerepo.git"
     repo_match = re.fullmatch(
@@ -119,7 +126,9 @@ def main(sha, repo_url, branch_name):
         nonlocal output, done, succeeded
         stream = io.StringIO()
         done, succeeded = draw_runs(
-            url, get_data, lambda s: print(s, file=stream),
+            url,
+            get_data,
+            lambda s: print(s, file=stream),
         )
         output = stream.getvalue()
 
@@ -142,7 +151,7 @@ def main(sha, repo_url, branch_name):
             with console.screen() as screen:
                 while not done:
                     screen.update(output)
-                    time.sleep(1)
+                    time.sleep(poll)
                     doit()
 
     if watch_gha_errors:
