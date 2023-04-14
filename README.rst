@@ -122,6 +122,9 @@ Unreleased
 
 - Requests to GitHub are now made asynchronously, speeding execution.
 
+- Redirections from GitHub (for example, if a repo is renamed or moved) are
+  followed transparently.
+
 - The exit code is now 1 if any runs failed, 0 if all were successful.
 
 - Long lines are no longer wrapped too short.

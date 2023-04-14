@@ -67,7 +67,9 @@ class Http:
         async with httpx.AsyncClient() as client:
             for _ in range(3):
                 try:
-                    resp = await client.get(url, headers=self.headers, timeout=30)
+                    resp = await client.get(
+                        url, headers=self.headers, timeout=30, follow_redirects=True
+                    )
                 except httpx.HTTPError as e:
                     raise WatchGhaError(e)
                 if resp.status_code not in self.RETRY_STATUS_CODES:
