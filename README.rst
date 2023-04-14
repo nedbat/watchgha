@@ -17,7 +17,7 @@ I suggest installing with `pipx`_:
 
 .. code-block:: shell
 
-    $ pipx install git+https://github.com/nedbat/watchgha
+    $ pipx install watchgha
 
 Now you have a command ``watch_gha_runs`` available.  I use a `git alias`_
 so that my current repo and branch are implied:
@@ -115,8 +115,10 @@ status::
 Changelog
 =========
 
-Unreleased
-----------
+.. scriv-start-here
+
+1.0.0 — 2023-04-15
+------------------
 
 - The ``--poll`` option sets the number of seconds to wait between refreshes.
 
@@ -130,7 +132,7 @@ Unreleased
 - Long lines are no longer wrapped too short.
 
 
-0.6.0 – 2023-03-22
+0.6.0 — 2023-03-22
 ------------------
 
 - Runs can be selected by a commit SHA by using ``--sha`` on the command line.
@@ -138,14 +140,14 @@ Unreleased
 - Retry if GitHub returns "502 - Bad Gateway".
 
 
-0.5.0 – 2023-03-15
+0.5.0 — 2023-03-15
 ------------------
 
 - Uses a ``GITHUB_TOKEN`` environment variable for authentication if it is
   defined.
 
 
-0.0.2 – 2023-03-14
+0.0.2 — 2023-03-14
 ------------------
 
 - Support more forms of repo URLs: ``git@github.com:``, without ``.git``, etc.
@@ -153,11 +155,13 @@ Unreleased
 - Better error messages if the repo URL can't be parsed.
 
 
-0.0.1 – 2023-03-13
+0.0.1 — 2023-03-13
 ------------------
 
 First version
 
+
+.. scriv-end-here
 
 Development
 ===========

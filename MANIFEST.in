@@ -1,0 +1,3 @@
+include .editorconfig
+include Makefile
+include dev-requirements.txt

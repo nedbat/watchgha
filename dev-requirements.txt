@@ -1,0 +1,6 @@
+# Packages to install for working on the project.
+
+check-manifest
+build
+scriv
+twine
