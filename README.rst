@@ -117,6 +117,14 @@ Changelog
 
 .. scriv-start-here
 
+Unreleased
+----------
+
+- Fix: if a .yml workflow file can't be parsed, its "run" will persist in the
+  list of runs for longer than it should.  Now those unparsable runs aren't
+  displayed at all.
+
+
 1.0.0 — 2023-04-15
 ------------------
 

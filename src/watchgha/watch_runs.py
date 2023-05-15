@@ -196,6 +196,10 @@ async def get_events(url, datafn):
         for _, g in itertools.groupby(runs, key=run_group_key):
             event_runs = list(g)
             these_runs_names = set(run["name"] for run in event_runs)
+            # If the .yml file couldn't even be parsed, the run name is the name
+            # of the .yml file.  Exclude those, or a bad parse will pollute the
+            # run list.
+            these_runs_names = set(n for n in these_runs_names if not n.startswith(".github/"))
             if not (these_runs_names - run_names_seen):
                 continue
             days_old = (
