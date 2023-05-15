@@ -103,7 +103,8 @@ def main(sha, poll, repo_url, branch_name):
     # repo_url = "https://github.com/owner/repo.git"
     # repo_url = "git@github.com:someorg/somerepo.git"
     repo_match = re.fullmatch(
-        r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?", repo_url
+        r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?",
+        repo_url
     )
     if repo_match is None:
         raise Exception(f"Couldn't find GitHub repo from {repo_url!r}")
@@ -195,11 +196,13 @@ async def get_events(url, datafn):
 
         for _, g in itertools.groupby(runs, key=run_group_key):
             event_runs = list(g)
-            these_runs_names = set(run["name"] for run in event_runs)
-            # If the .yml file couldn't even be parsed, the run name is the name
-            # of the .yml file.  Exclude those, or a bad parse will pollute the
-            # run list.
-            these_runs_names = set(n for n in these_runs_names if not n.startswith(".github/"))
+            these_runs_names = {run["name"] for run in event_runs}
+            # If the .yml file couldn't even be parsed, the run name is the
+            # name of the .yml file.  Exclude those, or a bad parse will
+            # pollute the run list.
+            these_runs_names = {
+                n for n in these_runs_names if not n.startswith(".github/")
+            }
             if not (these_runs_names - run_names_seen):
                 continue
             days_old = (
@@ -239,11 +242,12 @@ def draw_events(events, outfn):
             if summary not in FINISHED:
                 done = False
             r = DictAttr(run)
+            run_id = r.html_url.split("/")[-1]
             outfn(
-                f"   "
+                "   "
                 + f"[{style}]{icon} {summary:12}[/] "
                 + f"[white bold]{r.name:16}[/] "
-                + f"  [blue link={r.html_url}]view {r.html_url.split('/')[-1]}[/]"
+                + f"  [blue link={r.html_url}]view {run_id}[/]"
             )
 
             if summary == "success":
@@ -282,7 +286,7 @@ def draw_events(events, outfn):
 
                 j = DictAttr(job)
                 outfn(
-                    f"      "
+                    "      "
                     + f"{j.name:30} [{style}]{icon}[/] "
                     + f"{stepdots}[{style}]{current_step}[/]"
                 )

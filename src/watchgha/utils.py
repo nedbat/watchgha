@@ -2,9 +2,9 @@ import datetime
 import itertools
 import mimetypes
 import os
-import time
 
 import httpx
+import trio
 
 
 class WatchGhaError(Exception):
@@ -44,19 +44,19 @@ class Http:
 
     Uses the GITHUB_TOKEN environment variable (if set) as authentication.
 
-    Define SAVE_DATA=1 in the environment to save retrieved data in get_*.* files.
+    Define SAVE_DATA=1 in the environment to save retrieved data in get_*.*
+    files.
 
     """
-
-    # $set_env.py: SAVE_DATA - save all fetched data to get_* files.
 
     RETRY_STATUS_CODES = {502}
 
     def __init__(self):
+        # $set_env.py: SAVE_DATA - save all fetched data to get_* files.
         self.save = bool(int(os.environ.get("SAVE_DATA", "0")))
         if self.save:
             with open("get_index.txt", "w") as index:
-                print("# URLs fetched:", file=index)
+                index.write("# URLs fetched:\n")
             self.count = itertools.count()
         self.headers = {}
         token = os.environ.get("GITHUB_TOKEN", "")
@@ -68,7 +68,10 @@ class Http:
             for _ in range(3):
                 try:
                     resp = await client.get(
-                        url, headers=self.headers, timeout=30, follow_redirects=True
+                        url,
+                        headers=self.headers,
+                        timeout=30,
+                        follow_redirects=True,
                     )
                 except httpx.HTTPError as e:
                     raise WatchGhaError(e)
@@ -79,10 +82,10 @@ class Http:
             if self.save:
                 ext = extension_for_content(resp)
                 filename = f"get_{next(self.count):03d}{ext}"
-                with open("get_index.txt", "a") as index:
-                    print(f"{filename}: {url}", file=index)
-                with open(filename, "w") as out:
-                    out.write(data)
+                async with await trio.open_file("get_index.txt", "a") as index:
+                    await index.write(f"{filename}: {url}\n")
+                async with await trio.open_file(filename, "w") as out:
+                    await out.write(data)
             return data
 
 
