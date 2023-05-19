@@ -9,7 +9,7 @@ help: 	## Display this help message.
 clean: 	## Remove stuff we don't need.
 	find . -name '__pycache__' -exec rm -rf {} +
 	rm -fr build/ dist/ src/*.egg-info
-	rm -f get_*.json
+	rm -f get_*.json get_index.txt
 
 tools:	## Install the development tools.
 	python -m pip install -r dev-requirements.txt
