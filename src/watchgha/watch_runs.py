@@ -47,35 +47,35 @@ def run_sort_key(run_data):
 
 
 CSTYLES = {
-    "success": "green bold",
     "failure": "red bold",
     "startup_failure": "red bold",
+    "success": "green bold",
 }
 
 # States that are finished.
 FINISHED = {
-    "success",
-    "failure",
     "cancelled",
+    "failure",
     "startup_failure",
+    "success",
 }
 
 CICONS = {
+    "cancelled": "\N{DAGGER}",
+    "failure": "\N{BALLOT X}",
+    "in_progress": "\N{CLOCKWISE OPEN CIRCLE ARROW}",
     "pending": "\N{TIMER CLOCK}",
     "queued": "\N{TIMER CLOCK}",
-    "in_progress": "\N{CLOCKWISE OPEN CIRCLE ARROW}",
-    "success": "\N{CHECK MARK}",
-    "failure": "\N{BALLOT X}",
-    "cancelled": "\N{DAGGER}",
     "startup_failure": "\N{BALLOT X}",
+    "success": "\N{CHECK MARK}",
 }
 
 STEPDOTS = {
-    "success": "[green]\N{BULLET}[/]",
     "failure": "[red]\N{BULLET}[/]",
-    "skipped": "[default]\N{WHITE BULLET}[/]",
     "in_progress": "[white]\N{BULLET}[/]",
     "queued": "[dim white]\N{BULLET}[/]",
+    "skipped": "[default]\N{WHITE BULLET}[/]",
+    "success": "[green]\N{BULLET}[/]",
 }
 
 
