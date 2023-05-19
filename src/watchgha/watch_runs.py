@@ -56,7 +56,14 @@ CSTYLES = {
 FINISHED = {
     "cancelled",
     "failure",
+    "skipped",
     "startup_failure",
+    "success",
+}
+
+# States that don't need jobs displayed.
+NO_JOBS = {
+    "skipped",
     "success",
 }
 
@@ -66,6 +73,7 @@ CICONS = {
     "in_progress": "\N{CLOCKWISE OPEN CIRCLE ARROW}",
     "pending": "\N{TIMER CLOCK}",
     "queued": "\N{TIMER CLOCK}",
+    "skipped": "\N{BALLOT BOX}",
     "startup_failure": "\N{BALLOT X}",
     "success": "\N{CHECK MARK}",
 }
@@ -250,7 +258,7 @@ def draw_events(events, outfn):
                 + f"  [blue link={r.html_url}]view {run_id}[/]"
             )
 
-            if summary == "success":
+            if summary in NO_JOBS:
                 continue
 
             succeeded = False

@@ -124,6 +124,8 @@ Unreleased
   list of runs for longer than it should.  Now those unparsable runs aren't
   displayed at all.
 
+- Fix: skipped runs are considered finished, and don't need their jobs shown.
+
 
 1.0.0 — 2023-04-15
 ------------------
