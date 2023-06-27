@@ -65,19 +65,32 @@ class Http:
 
     async def get_data(self, url):
         async with httpx.AsyncClient() as client:
-            for _ in range(3):
-                try:
+            resp = None
+            try:
+                for _ in range(3):
                     resp = await client.get(
                         url,
                         headers=self.headers,
                         timeout=30,
                         follow_redirects=True,
                     )
-                except httpx.HTTPError as e:
-                    raise WatchGhaError(e)
-                if resp.status_code not in self.RETRY_STATUS_CODES:
-                    break
-            resp.raise_for_status()
+                    if resp.status_code not in self.RETRY_STATUS_CODES:
+                        break
+                resp.raise_for_status()
+            except httpx.HTTPError as e:
+                # Some error messages have the URL, and some don't.  Add it in
+                # if it isn't there already.
+                if len(url) > 10 and url in str(e):
+                    msg = str(e)
+                else:
+                    msg = f"Couldn't get {url!r}: {e}"
+                if resp is not None:
+                    try:
+                        for label, text in resp.json().items():
+                            msg += f"\n{label}: {text}"
+                    except Exception:
+                        msg += f"\n{resp.text}"
+                raise WatchGhaError(msg) from e
             data = resp.text
             if self.save:
                 ext = extension_for_content(resp)

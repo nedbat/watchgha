@@ -139,8 +139,8 @@ def main(sha, poll, repo, branch):
         stream = io.StringIO()
         done, succeeded = draw_runs(
             url,
-            get_data,
-            lambda s: print(s, file=stream),
+            datafn=get_data,
+            outfn=lambda s: print(s, file=stream),
         )
         output = stream.getvalue()
 
@@ -168,11 +168,7 @@ def main(sha, poll, repo, branch):
                     doit()
 
     if watch_gha_errors:
-        orig = watch_gha_errors[0].args[0]
-        msg = f"Error: {orig.__class__.__name__}"
-        if str(orig):
-            msg += f": {orig}"
-        fatal(msg)
+        fatal(watch_gha_errors[0])
 
     console.print(output, end="")
     if interrupted:
