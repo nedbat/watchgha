@@ -154,6 +154,11 @@ Unreleased
 
 - Fix: skipped runs are considered finished, and don't need their jobs shown.
 
+- Error reporting is improved, removing unneeded noisy tracebacks in some
+  cases.
+
+- Interrupting with ctrl-C will set the exit status to 2.
+
 .. _issue 7: https://github.com/nedbat/watchgha/issues/7
 
 

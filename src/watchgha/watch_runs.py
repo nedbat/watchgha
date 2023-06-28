@@ -29,6 +29,7 @@ from .utils import get_data, nice_time, to_datetime, DictAttr, WatchGhaError
 
 bucketer = DatetimeBucketer(5)
 console = rich.console.Console(highlight=False)
+error_console = rich.console.Console(stderr=True, highlight=False)
 
 
 def run_group_key(run_data):
@@ -98,6 +99,11 @@ def summary_style_icon(data):
     return summary, style, icon
 
 
+def fatal(msg, status=2):
+    error_console.print(msg)
+    sys.exit(status)
+
+
 @click.command()
 @click.option("--sha", help="The commit SHA to use. Must be a full SHA.")
 @click.option(
@@ -126,7 +132,7 @@ def main(sha, poll, repo, branch_name):
     elif ":" in repo:
         repo_url = repo
     else:
-        raise Exception(f"Don't understand repo {repo!r}")
+        fatal(f"Don't understand repo {repo!r}")
 
     # repo_url = "https://github.com/owner/repo.git"
     # repo_url = "git@github.com:someorg/somerepo.git"
@@ -135,7 +141,7 @@ def main(sha, poll, repo, branch_name):
         repo_url
     )
     if repo_match is None:
-        raise Exception(f"Couldn't find GitHub repo from {repo_url!r}")
+        fatal(f"Couldn't find GitHub repo from {repo_url!r}")
 
     url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs"
     params = {"per_page": "40"}
@@ -152,6 +158,7 @@ def main(sha, poll, repo, branch_name):
     output = ""
     done = False
     succeeded = False
+    interrupted = False
 
     def doit():
         nonlocal output, done, succeeded
@@ -169,7 +176,8 @@ def main(sha, poll, repo, branch_name):
         watch_gha_errors.extend(excgroup.exceptions)
 
     def handle_keyboardinterrupt(excgroup):
-        print("** interrupted **")
+        nonlocal interrupted
+        interrupted = True
 
     with exceptiongroup.catch(
         {
@@ -190,10 +198,11 @@ def main(sha, poll, repo, branch_name):
         msg = f"Error: {orig.__class__.__name__}"
         if str(orig):
             msg += f": {orig}"
-        print(msg)
-        sys.exit(2)
+        fatal(msg)
 
     console.print(output, end="")
+    if interrupted:
+        fatal("** interrupted **", status=2)
     sys.exit(0 if succeeded else 1)
 
 
