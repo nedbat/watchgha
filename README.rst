@@ -2,10 +2,9 @@
 Watch GitHub Action runs
 ########################
 
-This package provides one command, ``watch_gha_runs``.  It takes a GitHub repo
-URL and a branch name, and displays the status of the latest GitHub Action runs
-on that branch.  If any of the runs are in progress, it will refresh the
-display each second with the current status.
+This package provides one command, ``watch_gha_runs``.  It displays the status
+of the latest GitHub Action runs your current branch.  If any of the runs are
+in progress, it will refresh the display repeatedly with the latest status.
 
 If you like, the name can be pronounced, "Watching? Ha!"
 
@@ -19,8 +18,10 @@ I suggest installing with `pipx`_:
 
     $ pipx install watchgha
 
-Now you have a command ``watch_gha_runs`` available.  I use a `git alias`_
-so that my current repo and branch are implied:
+Now you have a command ``watch_gha_runs`` available.
+
+For complex defaulting, you can use a `git alias`_.  For example, this provides
+the same defaults, but can be adapted:
 
 .. code-block:: ini
 
@@ -35,6 +36,29 @@ Now ``git runs`` will show a live display of the current runs on your branch.
 
 You can authenticate against GitHub if needed using either an entry in your
 .netrc file, or by setting the ``GITHUB_TOKEN`` environment variable.
+
+
+Usage
+=====
+
+.. code-block:: shell
+
+    $ watch_gha_runs --help
+    Usage: watch_gha_runs [OPTIONS] [REPO] [BRANCH_NAME]
+
+      Watch GitHub Action runs.
+
+      Repeatedly gets the latest status and redraws the screen, until all of the
+      jobs are complete.
+
+      REPO is a local directory or GitHub URL, defaulting to ".".
+
+      BRANCH_NAME is defaulted from the git repo.
+
+    Options:
+      --sha TEXT      The commit SHA to use. Must be a full SHA.
+      --poll INTEGER  How many seconds between refreshes.  [default: 1]
+      --help          Show this message and exit.
 
 
 Display
@@ -120,11 +144,17 @@ Changelog
 Unreleased
 ----------
 
+- Now the GitHub repo location and branch name are defaulted from the current
+  git repo.  The repo location can be a local directory or GitHub URL. Closes
+  `issue 7`_.
+
 - Fix: if a .yml workflow file can't be parsed, its "run" will persist in the
   list of runs for longer than it should.  Now those unparsable runs aren't
   displayed at all.
 
 - Fix: skipped runs are considered finished, and don't need their jobs shown.
+
+.. _issue 7: https://github.com/nedbat/watchgha/issues/7
 
 
 1.0.0 — 2023-04-15

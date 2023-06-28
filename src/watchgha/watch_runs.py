@@ -11,6 +11,7 @@ import datetime
 import io
 import itertools
 import json
+import os.path
 import re
 import sys
 import time
@@ -22,6 +23,7 @@ import rich.console
 import trio
 
 from .bucketer import DatetimeBucketer
+from .git_help import git_repo_url, git_branch
 from .utils import get_data, nice_time, to_datetime, DictAttr, WatchGhaError
 
 
@@ -105,9 +107,27 @@ def summary_style_icon(data):
     default=1,
     show_default=True,
 )
-@click.argument("repo_url")
+@click.argument("repo", default=".")
 @click.argument("branch_name", required=False)
-def main(sha, poll, repo_url, branch_name):
+def main(sha, poll, repo, branch_name):
+    """
+    Watch GitHub Action runs.
+
+    Repeatedly gets the latest status and redraws the screen, until all of the
+    jobs are complete.
+
+    REPO is a local directory or GitHub URL, defaulting to ".".
+
+    BRANCH_NAME is defaulted from the git repo.
+
+    """
+    if os.path.isdir(repo):
+        repo_url = git_repo_url(repo)
+    elif ":" in repo:
+        repo_url = repo
+    else:
+        raise Exception(f"Don't understand repo {repo!r}")
+
     # repo_url = "https://github.com/owner/repo.git"
     # repo_url = "git@github.com:someorg/somerepo.git"
     repo_match = re.fullmatch(
@@ -120,10 +140,12 @@ def main(sha, poll, repo_url, branch_name):
     url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs"
     params = {"per_page": "40"}
 
-    if branch_name:
-        params["branch"] = branch_name
-    elif sha:
+    if sha:
         params["head_sha"] = sha
+    elif branch_name:
+        params["branch"] = branch_name
+    else:
+        params["branch"] = git_branch()
 
     url += "?" + urllib.parse.urlencode(params)
 
