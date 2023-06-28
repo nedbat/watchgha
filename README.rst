@@ -44,7 +44,7 @@ Usage
 .. code-block:: shell
 
     $ watch_gha_runs --help
-    Usage: watch_gha_runs [OPTIONS] [REPO] [BRANCH_NAME]
+    Usage: watch_gha_runs [OPTIONS] [REPO] [BRANCH]
 
       Watch GitHub Action runs.
 
@@ -53,7 +53,7 @@ Usage
 
       REPO is a local directory or GitHub URL, defaulting to ".".
 
-      BRANCH_NAME is defaulted from the git repo.
+      BRANCH is defaulted from the git repo.
 
     Options:
       --sha TEXT      The commit SHA to use. Must be a full SHA.

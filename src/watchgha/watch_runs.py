@@ -114,8 +114,8 @@ def fatal(msg, status=2):
     show_default=True,
 )
 @click.argument("repo", default=".")
-@click.argument("branch_name", required=False)
-def main(sha, poll, repo, branch_name):
+@click.argument("branch", required=False)
+def main(sha, poll, repo, branch):
     """
     Watch GitHub Action runs.
 
@@ -124,36 +124,10 @@ def main(sha, poll, repo, branch_name):
 
     REPO is a local directory or GitHub URL, defaulting to ".".
 
-    BRANCH_NAME is defaulted from the git repo.
+    BRANCH is defaulted from the git repo.
 
     """
-    if os.path.isdir(repo):
-        repo_url = git_repo_url(repo)
-    elif ":" in repo:
-        repo_url = repo
-    else:
-        fatal(f"Don't understand repo {repo!r}")
-
-    # repo_url = "https://github.com/owner/repo.git"
-    # repo_url = "git@github.com:someorg/somerepo.git"
-    repo_match = re.fullmatch(
-        r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?",
-        repo_url
-    )
-    if repo_match is None:
-        fatal(f"Couldn't find GitHub repo from {repo_url!r}")
-
-    url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs"
-    params = {"per_page": "40"}
-
-    if sha:
-        params["head_sha"] = sha
-    elif branch_name:
-        params["branch"] = branch_name
-    else:
-        params["branch"] = git_branch()
-
-    url += "?" + urllib.parse.urlencode(params)
+    url = gha_url(repo, branch, sha)
 
     output = ""
     done = False
@@ -204,6 +178,38 @@ def main(sha, poll, repo, branch_name):
     if interrupted:
         fatal("** interrupted **", status=2)
     sys.exit(0 if succeeded else 1)
+
+
+def gha_url(repo, branch, sha):
+    """Figure out the GHA api URL to use for `repo`, `branch`, and `sha`."""
+    if os.path.isdir(repo):
+        repo_url = git_repo_url(repo)
+    elif ":" in repo:
+        repo_url = repo
+    else:
+        fatal(f"Don't understand repo {repo!r}")
+
+    # repo_url = "https://github.com/owner/repo.git"
+    # repo_url = "git@github.com:someorg/somerepo.git"
+    repo_match = re.fullmatch(
+        r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?",
+        repo_url
+    )
+    if repo_match is None:
+        fatal(f"Couldn't find GitHub repo from {repo_url!r}")
+
+    url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs"
+    params = {"per_page": "40"}
+
+    if sha:
+        params["head_sha"] = sha
+    elif branch:
+        params["branch"] = branch
+    else:
+        params["branch"] = git_branch()
+
+    url += "?" + urllib.parse.urlencode(params)
+    return url
 
 
 def draw_runs(url, datafn, outfn):
