@@ -155,7 +155,7 @@ Unreleased
 - Fix: skipped runs are considered finished, and don't need their jobs shown.
 
 - Error reporting is improved, removing unneeded noisy tracebacks in some
-  cases.
+  cases, and providing more information for GitHub API errors.
 
 - Interrupting with ctrl-C will set the exit status to 2.
 

@@ -67,7 +67,7 @@ class Http:
         async with httpx.AsyncClient() as client:
             resp = None
             try:
-                for _ in range(3):
+                for ntry in range(3):
                     resp = await client.get(
                         url,
                         headers=self.headers,
@@ -76,6 +76,7 @@ class Http:
                     )
                     if resp.status_code not in self.RETRY_STATUS_CODES:
                         break
+                    await trio.sleep(.05 * 2 ** ntry)
                 resp.raise_for_status()
             except httpx.HTTPError as e:
                 # Some error messages have the URL, and some don't.  Add it in
