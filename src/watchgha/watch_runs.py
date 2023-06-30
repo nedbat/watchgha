@@ -110,7 +110,7 @@ def fatal(msg, status=2):
     "--poll",
     help="How many seconds between refreshes.",
     type=int,
-    default=1,
+    default=15,
     show_default=True,
 )
 @click.argument("repo", default=".")

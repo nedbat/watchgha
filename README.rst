@@ -144,6 +144,8 @@ Changelog
 Unreleased
 ----------
 
+- The default polling interval is now 15 seconds.
+
 - Now the GitHub repo location and branch name are defaulted from the current
   git repo.  The repo location can be a local directory or GitHub URL. Closes
   `issue 7`_.
