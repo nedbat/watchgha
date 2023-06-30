@@ -77,9 +77,21 @@ class Http:
             return data
 
 
-get_data = Http().get_data
 def extension_for_content(response):
     content_type = response.headers["content-type"].partition(";")[0].strip()
     return mimetypes.guess_extension(content_type)
 
 
+_get_data = Http().get_data
+
+
+async def get_data(*args, **kwargs):
+    """Run get_data three times, with retry."""
+    # I don't like that this has a retry loop and get_data above also does.
+    for ntry in range(3):
+        try:
+            return await _get_data(*args, **kwargs)
+        except Exception as exc:
+            exc_to_raise = exc
+            await trio.sleep(.05 * 2 ** ntry)
+    raise exc_to_raise

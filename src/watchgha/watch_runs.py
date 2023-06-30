@@ -100,17 +100,6 @@ def summary_style_icon(data):
     return summary, style, icon
 
 
-async def retry_get_data(*args, **kwargs):
-    """Run get_data three times, with retry."""
-    for ntry in range(3):
-        try:
-            return await get_data(*args, **kwargs)
-        except Exception as exc:
-            exc_to_raise = exc
-            await trio.sleep(.1 * 2 ** ntry)
-    raise exc_to_raise
-
-
 def fatal(msg, status=2):
     error_console.print(msg)
     sys.exit(status)
@@ -152,7 +141,7 @@ def main(sha, poll, repo, branch):
 
         done, succeeded = draw_runs(
             url,
-            datafn=retry_get_data,
+            datafn=get_data,
             outfn=lambda s: print(s, file=stream),
         )
         output = stream.getvalue()
