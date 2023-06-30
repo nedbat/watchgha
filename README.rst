@@ -166,8 +166,8 @@ Unreleased
   git repo.  The repo location can be a local directory or GitHub URL. Closes
   `issue 7`_.
 
-- Fix: if a .yml workflow file can't be parsed, its "run" will persist in the
-  list of runs for longer than it should.  Now those unparsable runs aren't
+- Fix: if a .yml workflow file couldn't be parsed, its "run" would persist in
+  the list of runs for longer than it should.  Now those unparsable runs aren't
   displayed at all.
 
 - Fix: skipped runs are considered finished, and don't need their jobs shown.
