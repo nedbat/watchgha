@@ -24,7 +24,8 @@ import trio
 
 from .bucketer import DatetimeBucketer
 from .git_help import git_repo_url, git_branch
-from .utils import get_data, nice_time, to_datetime, DictAttr, WatchGhaError
+from .http_help import get_data
+from .utils import nice_time, to_datetime, DictAttr, WatchGhaError
 
 
 bucketer = DatetimeBucketer(5)
