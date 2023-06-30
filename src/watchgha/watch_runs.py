@@ -14,7 +14,6 @@ import json
 import os.path
 import re
 import sys
-import time
 import urllib.parse
 
 import click
@@ -25,7 +24,7 @@ import trio
 from .bucketer import DatetimeBucketer
 from .git_help import git_repo_url, git_branch
 from .http_help import get_data
-from .utils import nice_time, to_datetime, DictAttr, WatchGhaError
+from .utils import nice_time, to_datetime, DictAttr, Interval, WatchGhaError
 
 
 bucketer = DatetimeBucketer(5)
@@ -161,12 +160,13 @@ def main(sha, poll, repo, branch):
             KeyboardInterrupt: handle_keyboardinterrupt,
         }
     ):
+        interval = Interval(poll)
         doit()
         if not done:
             with console.screen() as screen:
                 while not done:
                     screen.update(output)
-                    time.sleep(poll)
+                    interval.wait()
                     doit()
 
     if watch_gha_errors:

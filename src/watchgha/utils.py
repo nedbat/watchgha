@@ -1,5 +1,5 @@
 import datetime
-
+import time
 
 
 class WatchGhaError(Exception):
@@ -31,3 +31,22 @@ class DictAttr:
 
     def __getattr__(self, name):
         return self.d[name]
+
+
+class Interval:
+    """Wait for an interval of time to pass.
+
+    Better than time.sleep because it accounts for time spent doing things
+    other than sleeping.
+
+    """
+    def __init__(self, secs):
+        self.secs = secs
+        self.last_time = time.time()
+
+    def wait(self):
+        now = time.time()
+        delay = self.secs - (now - self.last_time)
+        self.last_time = now
+        if delay > 0:
+            time.sleep(delay)
