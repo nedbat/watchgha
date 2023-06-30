@@ -156,10 +156,12 @@ Unreleased
 
 - Error reporting is improved, removing unneeded noisy tracebacks in some
   cases, and providing more information for GitHub API errors.
+  Closes `issue 8`_.
 
 - Interrupting with ctrl-C will set the exit status to 2.
 
 .. _issue 7: https://github.com/nedbat/watchgha/issues/7
+.. _issue 8: https://github.com/nedbat/watchgha/issues/8
 
 
 1.0.0 — 2023-04-15
