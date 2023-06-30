@@ -41,15 +41,29 @@ You can authenticate against GitHub if needed using either an entry in your
 Usage
 =====
 
-.. code-block:: shell
+.. [[[cog
+    import os
+    import subprocess
+    import textwrap
+    command = "watch_gha_runs --help".split()
+    env = dict(os.environ, COLUMNS="72")
+    output = subprocess.check_output(command, env=env)
+    print()
+    print(".. code-block::")
+    print()
+    print("    $", *command)
+    print(textwrap.indent(output.decode(), "    "))
+.. ]]]
+
+.. code-block::
 
     $ watch_gha_runs --help
     Usage: watch_gha_runs [OPTIONS] [REPO] [BRANCH]
 
       Watch GitHub Action runs.
 
-      Repeatedly gets the latest status and redraws the screen, until all of the
-      jobs are complete.
+      Repeatedly gets the latest status and redraws the screen, until all
+      of the jobs are complete.
 
       REPO is a local directory or GitHub URL, defaulting to ".".
 
@@ -57,8 +71,10 @@ Usage
 
     Options:
       --sha TEXT      The commit SHA to use. Must be a full SHA.
-      --poll INTEGER  How many seconds between refreshes.  [default: 1]
+      --poll INTEGER  How many seconds between refreshes.  [default: 15]
       --help          Show this message and exit.
+
+.. [[[end]]] (checksum: e53cd24111d9a3e328f662d3b16a3196)
 
 
 Display

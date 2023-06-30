@@ -1,6 +1,7 @@
 # Packages to install for working on the project.
 
 check-manifest
+cogapp
 build
 scriv
 twine

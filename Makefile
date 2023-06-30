@@ -27,6 +27,11 @@ pypi:	## Upload the built distributions to PyPI.
 pipx:	## Install locally as a command
 	pipx install --force -e .
 
+.PHONY: cog_docs
+
+cog_docs:	## Run cog to get docs right
+	python -m cogapp -crP --verbosity=1 README.rst
+
 test_release: clean check_release dist test_pypi	## Do all the steps for a test release
 
 release: clean check_release dist pypi tag gh_release	## Do all the steps for a release
