@@ -84,7 +84,18 @@ Display
 The output shows runs and jobs.  The current step of each job is shown, with a
 row of bullets indicating the number of steps, and which is current:
 
-.. image:: https://nedbatchelder.com/pix/watchgha.png
+..
+    How to make the animated gif:
+      - branch in coverage.py
+      - comment out pypy in testsuite.yml
+      create window 80x24
+      copy "watch_gha_runs --wait-for-start --poll=5"
+      g ampf; asciinema rec --overwrite watch.cast
+      paste the command
+      exit the shell when it's done
+      $ agg --speed=5 --font-family=Monego --font-size=18 watch.cast watch.gif
+
+.. image:: https://raw.githubusercontent.com/nedbat/watchgha/main/watch.gif
 
 .. code-block::
 
