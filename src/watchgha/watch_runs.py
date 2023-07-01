@@ -113,9 +113,10 @@ def fatal(msg, status=2):
     default=15,
     show_default=True,
 )
+@click.option("--wait-for-start", is_flag=True, help="Wait for jobs to start")
 @click.argument("repo", default=".")
 @click.argument("branch", required=False)
-def main(sha, poll, repo, branch):
+def main(sha, poll, wait_for_start, repo, branch):
     """
     Watch GitHub Action runs.
 
@@ -146,6 +147,7 @@ def main(sha, poll, repo, branch):
         output = stream.getvalue()
 
     watch_gha_errors = []
+    interval = Interval(poll)
 
     def handle_watchghaerror(excgroup):
         watch_gha_errors.extend(excgroup.exceptions)
@@ -160,8 +162,14 @@ def main(sha, poll, repo, branch):
             KeyboardInterrupt: handle_keyboardinterrupt,
         }
     ):
-        interval = Interval(poll)
-        doit()
+        while True:
+            doit()
+            if wait_for_start:
+                if not done:
+                    break
+            else:
+                break
+
         if not done:
             with console.screen() as screen:
                 while not done:

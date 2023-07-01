@@ -70,11 +70,12 @@ Usage
       BRANCH is defaulted from the git repo.
 
     Options:
-      --sha TEXT      The commit SHA to use. Must be a full SHA.
-      --poll INTEGER  How many seconds between refreshes.  [default: 15]
-      --help          Show this message and exit.
+      --sha TEXT        The commit SHA to use. Must be a full SHA.
+      --poll INTEGER    How many seconds between refreshes.  [default: 15]
+      --wait-for-start  Wait for jobs to start
+      --help            Show this message and exit.
 
-.. [[[end]]] (checksum: e53cd24111d9a3e328f662d3b16a3196)
+.. [[[end]]] (checksum: 145e6947de009772786baa046962e235)
 
 
 Display
@@ -165,6 +166,12 @@ Unreleased
 - Now the GitHub repo location and branch name are defaulted from the current
   git repo.  The repo location can be a local directory or GitHub URL. Closes
   `issue 7`_.
+
+- A new option, ``--wait-for-start`` will make watch_gha_runs wait until jobs
+  are in progress.  This fixes a problem with using watch_gha_runs
+  programmatically: it can check the run status before any new runs have
+  started, and simply report the done state of the last bunch of runs, then
+  quit.
 
 - Fix: if a .yml workflow file couldn't be parsed, its "run" would persist in
   the list of runs for longer than it should.  Now those unparsable runs aren't
