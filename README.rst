@@ -169,8 +169,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.0.0 — 2023-07-02
+------------------
 
 - The default polling interval is now 15 seconds.
 
