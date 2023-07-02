@@ -93,7 +93,7 @@ row of bullets indicating the number of steps, and which is current:
       g ampf; asciinema rec --overwrite watch.cast
       paste the command
       exit the shell when it's done
-      $ agg --speed=5 --font-family=Monego --font-size=18 watch.cast watch.gif
+      $ agg --speed=5 --font-family="Monego,Symbola" --font-size=18 watch.cast watch.gif
 
 .. image:: https://raw.githubusercontent.com/nedbat/watchgha/main/watch.gif
 
