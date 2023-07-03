@@ -36,9 +36,12 @@ class Http:
         token = os.environ.get("GITHUB_TOKEN", "")
         if token:
             self.headers["Authorization"] = f"Bearer {token}"
+            self.auth = None
+        else:
+            self.auth = httpx.NetRCAuth()
 
     async def get_data(self, url):
-        async with httpx.AsyncClient() as client:
+        async with httpx.AsyncClient(auth=self.auth) as client:
             resp = None
             try:
                 for ntry in range(3):
