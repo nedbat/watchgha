@@ -169,7 +169,7 @@ Changelog
 
 .. scriv-start-here
 
-2.1.0 — 2023-07-05
+2.1.1 — 2023-07-05
 ------------------
 
 - Implicit .netrc authentication stopped working, but has been fixed. Thanks,
