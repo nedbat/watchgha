@@ -32,9 +32,11 @@ pipx:	## Install locally as a command
 cog_docs:	## Run cog to get docs right
 	python -m cogapp -crP --verbosity=1 README.rst
 
+.PHONY: test_release release check_release
+
 test_release: clean check_release dist test_pypi	## Do all the steps for a test release
 
-release: clean check_release dist pypi tag gh_release	## Do all the steps for a release
+release: clean check_release dist pypi tag gh_release comment	## Do all the steps for a release
 
 check_release: _check_manifest _check_tree _check_readme _check_version	## Check that we are ready for a release
 	@echo "Release checks passed"
@@ -63,6 +65,7 @@ _check_readme: _pip_install_e
 		echo "No entry in README.rst for version $$VER!"; \
 		exit 1; \
 	fi
+	python -m cogapp -cP --check --verbosity=1 README.rst
 
 _check_version: _pip_install_e
 	@export VER="$$(python -c "import watchgha as me; print(me.__version__)")" && \
@@ -71,6 +74,8 @@ _check_version: _pip_install_e
 		exit 1; \
 	fi
 
+.PHONY: tag gh_release comment
+
 tag: _pip_install_e ## Make a git tag with the version number
 	@export VER="$$(python -c "import watchgha as me; print(me.__version__)")" && \
 	git tag -a -m "Version $$VER" $$VER
@@ -78,3 +83,7 @@ tag: _pip_install_e ## Make a git tag with the version number
 
 gh_release:	## Publish a GitHub release
 	python -m scriv github-release --all
+
+comment:	## Show the markdown for a "shipped" comment.
+	@export VER="$$(python -c "import watchgha as me; print(me.__version__)")" && \
+	echo "This is now released as part of [watchgha $$VER](https://pypi.org/project/watchgha/$$VER)."
