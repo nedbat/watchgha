@@ -169,8 +169,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.1.0 — 2023-07-05
+------------------
 
 - Implicit .netrc authentication stopped working, but has been fixed. Thanks,
   `Rob Weir <pull 11_>`_.
