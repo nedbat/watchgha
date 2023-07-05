@@ -28,7 +28,7 @@ dependencies = [
     "click",
     "dulwich",
     "exceptiongroup",
-    "httpx",
+    "httpx>=0.24.0",    # 0.24.0 added NetRCAuth()
     "rich",
     "trio",
 ]

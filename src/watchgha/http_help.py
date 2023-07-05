@@ -32,11 +32,11 @@ class Http:
             with open("get_index.txt", "w") as index:
                 index.write("# URLs fetched:\n")
             self.count = itertools.count()
+        self.auth = None
         self.headers = {}
         token = os.environ.get("GITHUB_TOKEN", "")
         if token:
             self.headers["Authorization"] = f"Bearer {token}"
-            self.auth = None
         else:
             self.auth = httpx.NetRCAuth()
 

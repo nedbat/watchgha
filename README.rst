@@ -169,6 +169,15 @@ Changelog
 
 .. scriv-start-here
 
+Unreleased
+----------
+
+- Implicit .netrc authentication stopped working, but has been fixed. Thanks,
+  `Rob Weir <pull 11_>`_.
+
+.. _pull 11: https://github.com/nedbat/watchgha/pull/11
+
+
 2.0.0 — 2023-07-02
 ------------------
 
@@ -259,6 +268,7 @@ Contributors:
 
 - Ned Batchelder
 - Hugo van Kemenade
+- Rob Weir
 
 
 Back Story
