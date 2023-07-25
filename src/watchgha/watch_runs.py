@@ -7,9 +7,11 @@ older than a week are not considered.
 
 """
 
+import contextlib
 import io
 import os.path
 import re
+import signal
 import sys
 import urllib.parse
 
@@ -30,6 +32,30 @@ error_console = rich.console.Console(stderr=True, highlight=False)
 def fatal(msg, status=2):
     error_console.print(msg)
     sys.exit(status)
+
+@contextlib.contextmanager
+def handle_resize(handler):
+    original_sigwinch_handler = None
+    try:
+        # save the original handler
+        original_sigwinch_handler = signal.getsignal(signal.SIGWINCH)
+        # call the given handler on sigwinch
+        signal.signal(signal.SIGWINCH, lambda _, __: handler())
+    except AttributeError:
+        # this system is probably windows, and doesn't have SIGWINCH.
+        # Unfortunately there's no signal for window resize on windows and I don't
+        # know how to properly handle it. Just swallow the error
+        pass
+
+    # yield control to the with block, and re-raise any exceptions
+    try:
+        yield
+    except:
+        raise
+    finally:
+        # clean up our sigwinch handler if we set one
+        if original_sigwinch_handler:
+            signal.signal(signal.SIGWINCH, original_sigwinch_handler)
 
 
 @click.command()
@@ -129,10 +155,11 @@ class GhaWatcher:
 
             if not self.done:
                 with console.screen() as screen:
-                    while not self.done:
-                        screen.update(output)
-                        interval.wait()
-                        output = self.get_gha_display()
+                    with handle_resize(lambda: screen.update(output)):
+                        while not self.done:
+                            screen.update(output)
+                            interval.wait()
+                            output = self.get_gha_display()
 
         if self.watch_gha_errors:
             fatal(self.watch_gha_errors[0])
