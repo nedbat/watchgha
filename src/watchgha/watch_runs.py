@@ -33,18 +33,19 @@ def fatal(msg, status=2):
     error_console.print(msg)
     sys.exit(status)
 
+
 @contextlib.contextmanager
 def handle_resize(handler):
     original_sigwinch_handler = None
     try:
-        # save the original handler
+        # Save the original handler.
         original_sigwinch_handler = signal.getsignal(signal.SIGWINCH)
-        # call the given handler on sigwinch
+        # Call the given handler on sigwinch.
         signal.signal(signal.SIGWINCH, lambda _, __: handler())
     except AttributeError:
-        # this system is probably windows, and doesn't have SIGWINCH.
-        # Unfortunately there's no signal for window resize on windows and I don't
-        # know how to properly handle it. Just swallow the error
+        # This system is probably windows, and doesn't have SIGWINCH.
+        # Unfortunately there's no signal for window resize on windows and I
+        # don't know how to properly handle it. Just swallow the error.
         pass
 
     # yield control to the with block, and re-raise any exceptions

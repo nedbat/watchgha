@@ -169,6 +169,15 @@ Changelog
 
 .. scriv-start-here
 
+Unreleased
+----------
+
+- The output is now redrawn immediately when the terminal window is resized (on
+  Mac or Linux).  Thanks, `Bill Mill <pull 14_>`_.
+
+.. _pull 14: https://github.com/nedbat/watchgha/pull/14
+
+
 2.1.1 — 2023-07-05
 ------------------
 
@@ -267,6 +276,7 @@ to change the code, open an issue and let's talk about it.
 Contributors:
 
 - Ned Batchelder
+- Bill Mill
 - Hugo van Kemenade
 - Rob Weir
 
