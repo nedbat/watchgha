@@ -204,4 +204,3 @@ def draw_events(events, outfn):
                 )
 
     return done, succeeded
-

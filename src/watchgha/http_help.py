@@ -14,6 +14,7 @@ from .utils import WatchGhaError
 
 RETRY_STATUS_CODES = {502}
 
+
 class Http:
     """
     Helper for getting data from URLs.
@@ -53,7 +54,7 @@ class Http:
                     )
                     if resp.status_code not in RETRY_STATUS_CODES:
                         break
-                    await trio.sleep(.05 * 2 ** ntry)
+                    await trio.sleep(0.05 * 2**ntry)
                 resp.raise_for_status()
             except httpx.HTTPError as e:
                 # Some error messages have the URL, and some don't.  Add it in
@@ -96,5 +97,5 @@ async def get_data(*args, **kwargs):
             return await _get_data(*args, **kwargs)
         except Exception as exc:
             exc_to_raise = exc
-            await trio.sleep(.05 * 2 ** ntry)
+            await trio.sleep(0.05 * 2**ntry)
     raise exc_to_raise

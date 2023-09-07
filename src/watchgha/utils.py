@@ -40,6 +40,7 @@ class Interval:
     other than sleeping.
 
     """
+
     def __init__(self, secs):
         self.secs = secs
         self.last_time = time.time()

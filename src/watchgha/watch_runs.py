@@ -103,8 +103,7 @@ def gha_url(repo, branch, sha):
     # repo_url = "https://github.com/owner/repo.git"
     # repo_url = "git@github.com:someorg/somerepo.git"
     repo_match = re.fullmatch(
-        r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?",
-        repo_url
+        r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?", repo_url
     )
     if repo_match is None:
         fatal(f"Couldn't find GitHub repo from {repo_url!r}")

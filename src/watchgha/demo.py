@@ -31,13 +31,16 @@ DEMO_DATA = {
                 "status": "in_progress",
                 "jobs_url": "demo:jobs_tests",
             },
-            *[{
-                **RUN_COMMON,
-                "name": f"A {conc} run",
-                "status": "completed",
-                "conclusion": conc,
-                "jobs_url": "demo:jobs_1",
-            } for conc in FINISHED],
+            *[
+                {
+                    **RUN_COMMON,
+                    "name": f"A {conc} run",
+                    "status": "completed",
+                    "conclusion": conc,
+                    "jobs_url": "demo:jobs_1",
+                }
+                for conc in FINISHED
+            ],
         ],
     },
     "demo:jobs_1": {
@@ -78,26 +81,34 @@ DEMO_DATA = {
                     },
                 ],
             },
-            *[{
-                "name": f"Test suite Py 3.{py}",
-                "status": "in_progress",
-                "steps": [
-                    *[{
-                        "status": "completed",
-                        "conclusion": "success",
-                    } for _ in range(3 - py % 2)],
-                    {
-                        "status": "skipped",
-                    },
-                    {
-                        "name": "Prep tests" if (py % 2) else "Run the tests",
-                        "status": "in_progress",
-                    },
-                    *[{
-                        "status": "queued",
-                    } for _ in range(2 + py % 2)],
-                ],
-                } for py in [8, 9, 10, 11]
+            *[
+                {
+                    "name": f"Test suite Py 3.{py}",
+                    "status": "in_progress",
+                    "steps": [
+                        *[
+                            {
+                                "status": "completed",
+                                "conclusion": "success",
+                            }
+                            for _ in range(3 - py % 2)
+                        ],
+                        {
+                            "status": "skipped",
+                        },
+                        {
+                            "name": "Prep tests" if (py % 2) else "Run the tests",
+                            "status": "in_progress",
+                        },
+                        *[
+                            {
+                                "status": "queued",
+                            }
+                            for _ in range(2 + py % 2)
+                        ],
+                    ],
+                }
+                for py in [8, 9, 10, 11]
             ],
         ],
     },
@@ -107,9 +118,11 @@ DEMO_DATA = {
 async def demo_datafn(url):
     return json.dumps(DEMO_DATA[url])
 
+
 def demo():
     console = rich.console.Console(highlight=False)
     draw_runs("demo:one", datafn=demo_datafn, outfn=console.print)
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     demo()
