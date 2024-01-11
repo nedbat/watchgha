@@ -174,8 +174,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.2.0 — 2024-01-11
+------------------
 
 - Now all GitHub remotes are checked for jobs.  Previously, only one was
   checked, so you wouldn't see jobs running on an upstream fork.
