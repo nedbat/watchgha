@@ -36,7 +36,13 @@ cog_docs: _pip_install_e	## Run cog to get docs right
 
 test_release: clean check_release dist test_pypi	## Do all the steps for a test release
 
-release: clean check_release dist pypi tag gh_release comment	## Do all the steps for a release
+release: _check_credentials clean check_release dist pypi tag gh_release comment	## Do all the steps for a release
+
+_check_credentials:
+	@if [[ -z "$$TWINE_PASSWORD" ]]; then \
+		echo 'Missing TWINE_PASSWORD: opvars'; \
+		exit 1; \
+	fi
 
 check_release: _check_manifest _check_tree _check_readme _check_version	## Check that we are ready for a release
 	@echo "Release checks passed"
