@@ -45,6 +45,7 @@ CICONS = {
 }
 
 STEPDOTS = {
+    "cancelled": "[red]\N{DAGGER}[/]",
     "failure": "[red]\N{BULLET}[/]",
     "in_progress": "[white]\N{BULLET}[/]",
     "queued": "[dim white]\N{BULLET}[/]",
