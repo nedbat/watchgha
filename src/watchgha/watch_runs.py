@@ -68,10 +68,18 @@ def handle_resize(handler):
     default=15,
     show_default=True,
 )
-@click.option("--wait-for-start", is_flag=True, help="Wait for jobs to start")
+@click.option("--wait-for-start", is_flag=True, help="Wait for jobs to start.")
+@click.option(
+    "--only",
+    help=(
+        "Words to limit the workflows shown. "
+        + "Only workflows with these comma separated case insensitive substrings "
+        + "in their names will be shown."
+    ),
+)
 @click.argument("repo", default=".")
 @click.argument("branch", required=False)
-def main(sha, poll, wait_for_start, repo, branch):
+def main(sha, poll, wait_for_start, only, repo, branch):
     """
     Watch GitHub Action runs.
 
@@ -83,9 +91,15 @@ def main(sha, poll, wait_for_start, repo, branch):
     BRANCH is defaulted from the git repo.
 
     """
+    if only is not None:
+        only_words = [w.strip() for w in only.split(",")]
+    else:
+        only_words = None
+
     watcher = GhaWatcher(
         urls=gha_urls(repo, branch, sha),
-        get_data=get_data,
+        get_data_fn=get_data,
+        only_words=only_words,
     )
 
     watcher.watch(wait_for_start, poll, console)
@@ -133,9 +147,10 @@ def gha_urls(repo, branch, sha):
 
 
 class GhaWatcher:
-    def __init__(self, urls, get_data):
+    def __init__(self, urls, get_data_fn, only_words):
         self.urls = urls
-        self.get_data = get_data
+        self.get_data_fn = get_data_fn
+        self.only_words = only_words
         self.status = 0
         self.error = None
 
@@ -189,7 +204,8 @@ class GhaWatcher:
 
         self.done, self.succeeded = draw_runs(
             self.urls,
-            datafn=self.get_data,
+            only_words=self.only_words,
+            datafn=self.get_data_fn,
             outfn=lambda s: print(s, file=stream),
         )
         return stream.getvalue()

@@ -74,10 +74,13 @@ Usage
     Options:
       --sha TEXT        The commit SHA to use. Must be a full SHA.
       --poll INTEGER    How many seconds between refreshes.  [default: 15]
-      --wait-for-start  Wait for jobs to start
+      --wait-for-start  Wait for jobs to start.
+      --only TEXT       Words to limit the workflows shown. Only workflows
+                        with these comma separated case insensitive
+                        substrings in their names will be shown.
       --help            Show this message and exit.
 
-.. [[[end]]] (checksum: 145e6947de009772786baa046962e235)
+.. [[[end]]] (checksum: 7ccf840e890086fd0b4774b4ef1ac15a)
 
 
 Display
@@ -177,10 +180,14 @@ Unreleased
 - Now all GitHub remotes are checked for jobs.  Previously, only one was
   checked, so you wouldn't see jobs running on an upstream fork.
 
+- Added option ``--only`` to limit which workflows are displayed as requested
+  in `issue 17`_.
+
 - The output is now redrawn immediately when the terminal window is resized (on
   Mac or Linux).  Thanks, `Bill Mill <pull 14_>`_.
 
 .. _pull 14: https://github.com/nedbat/watchgha/pull/14
+.. _issue 17: https://github.com/nedbat/watchgha/issues/17
 
 
 2.1.1 — 2023-07-05

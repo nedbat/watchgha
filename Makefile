@@ -29,7 +29,7 @@ pipx:	## Install locally as a command
 
 .PHONY: cog_docs
 
-cog_docs:	## Run cog to get docs right
+cog_docs: _pip_install_e	## Run cog to get docs right
 	python -m cogapp -crP --verbosity=1 README.rst
 
 .PHONY: test_release release check_release
