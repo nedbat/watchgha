@@ -2,17 +2,15 @@
 Get information from local git.
 """
 
+import functools
+
 import dulwich.porcelain
 import dulwich.repo
 
-_repo = None
 
-
+@functools.lru_cache
 def _dulwich_repo(dir="."):
-    global _repo
-    if _repo is None:
-        _repo = dulwich.repo.Repo(dir)
-    return _repo
+    return dulwich.repo.Repo(dir)
 
 
 def git_repo_urls(dir):
@@ -24,6 +22,6 @@ def git_repo_urls(dir):
             yield url
 
 
-def git_branch():
+def git_branch(dir):
     """Get the current git branch name."""
-    return dulwich.porcelain.active_branch(_dulwich_repo()).decode()
+    return dulwich.porcelain.active_branch(_dulwich_repo(dir)).decode()

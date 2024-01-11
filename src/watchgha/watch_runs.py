@@ -92,13 +92,25 @@ def main(sha, poll, wait_for_start, repo, branch):
 
 
 def gha_urls(repo, branch, sha):
-    """Figure out the GHA api URL to use for `repo`, `branch`, and `sha`."""
+    """Figure out the GHA api URLs to use for `repo`, `branch`, and `sha`."""
     if os.path.isdir(repo):
         repo_urls = list(git_repo_urls(repo))
+        if branch is None:
+            branch = git_branch(repo)
     elif ":" in repo:
         repo_urls = [repo]
+        if branch is None:
+            fatal(f"Branch is required for URL repo")
     else:
         fatal(f"Don't understand repo {repo!r}")
+
+    params = {"per_page": "40"}
+    if sha:
+        params["head_sha"] = sha
+    else:
+        assert branch is not None
+        params["branch"] = branch
+    url_args = urllib.parse.urlencode(params)
 
     github_urls = []
     for repo_url in repo_urls:
@@ -111,17 +123,7 @@ def gha_urls(repo, branch, sha):
         if repo_match is None:
             continue
 
-        url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs"
-        params = {"per_page": "40"}
-
-        if sha:
-            params["head_sha"] = sha
-        elif branch:
-            params["branch"] = branch
-        else:
-            params["branch"] = git_branch()
-
-        url += "?" + urllib.parse.urlencode(params)
+        url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs?{url_args}"
         github_urls.append(url)
 
     if not github_urls:
