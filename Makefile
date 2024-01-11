@@ -92,4 +92,5 @@ gh_release:	## Publish a GitHub release
 
 comment:	## Show the markdown for a "shipped" comment.
 	@export VER="$$(python -c "import watchgha as me; print(me.__version__)")" && \
-	echo "This is now released as part of [watchgha $$VER](https://pypi.org/project/watchgha/$$VER)."
+	echo "Use this comment on issues and pull requests:" && \
+	echo "   This is now released as part of [watchgha $$VER](https://pypi.org/project/watchgha/$$VER)."

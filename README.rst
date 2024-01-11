@@ -172,6 +172,12 @@ status::
 Changelog
 =========
 
+.. Release process:
+    - This changelog is updated manually, not with scriv.
+    - Comments are added manually to GitHub issues and pull requests.
+    - Use `make check_release` to see if everything is ready for a release.
+    - Use `make release` to release a new version.
+
 .. scriv-start-here
 
 2.2.0 — 2024-01-11
