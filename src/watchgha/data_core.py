@@ -141,7 +141,7 @@ async def get_events(urls, datafn):
                 if summary != "success":
                     nursery.start_soon(load_run, run)
 
-        return events
+    return events
 
 
 def draw_events(events, outfn):
