@@ -91,14 +91,16 @@ row of bullets indicating the number of steps, and which is current:
 
 ..
     How to make the animated gif:
+      - https://github.com/asciinema/agg; brew install agg
       - branch in coverage.py
       - comment out pypy in testsuite.yml
+      - commit as "fix: most awesome fix"
       create window 80x24
       copy "watch_gha_runs --wait-for-start --poll=5"
       g ampf; asciinema rec --overwrite watch.cast
       paste the command
       exit the shell when it's done
-      $ agg --speed=5 --font-family="Monego,Symbola" --font-size=18 watch.cast watch.gif
+      $ agg --speed=10 --font-family="Monego,Symbola" --font-size=18 watch.cast watch.gif
 
 .. image:: https://raw.githubusercontent.com/nedbat/watchgha/main/watch.gif
 
