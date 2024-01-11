@@ -20,7 +20,7 @@ import exceptiongroup
 import rich.console
 
 from .data_core import draw_runs
-from .git_help import git_repo_url, git_branch
+from .git_help import git_repo_urls, git_branch
 from .http_help import get_data
 from .utils import Interval, WatchGhaError
 
@@ -84,47 +84,55 @@ def main(sha, poll, wait_for_start, repo, branch):
 
     """
     watcher = GhaWatcher(
-        url=gha_url(repo, branch, sha),
+        urls=gha_urls(repo, branch, sha),
         get_data=get_data,
     )
 
     watcher.watch(wait_for_start, poll, console)
 
 
-def gha_url(repo, branch, sha):
+def gha_urls(repo, branch, sha):
     """Figure out the GHA api URL to use for `repo`, `branch`, and `sha`."""
     if os.path.isdir(repo):
-        repo_url = git_repo_url(repo)
+        repo_urls = list(git_repo_urls(repo))
     elif ":" in repo:
-        repo_url = repo
+        repo_urls = [repo]
     else:
         fatal(f"Don't understand repo {repo!r}")
 
-    # repo_url = "https://github.com/owner/repo.git"
-    # repo_url = "git@github.com:someorg/somerepo.git"
-    repo_match = re.fullmatch(
-        r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?", repo_url
-    )
-    if repo_match is None:
-        fatal(f"Couldn't find GitHub repo from {repo_url!r}")
+    github_urls = []
+    for repo_url in repo_urls:
+        # repo_url = "https://github.com/owner/repo.git"
+        # repo_url = "git@github.com:someorg/somerepo.git"
+        repo_match = re.fullmatch(
+            r"(?:https://github.com/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?",
+            repo_url,
+        )
+        if repo_match is None:
+            continue
 
-    url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs"
-    params = {"per_page": "40"}
+        url = f"https://api.github.com/repos/{repo_match[1]}/actions/runs"
+        params = {"per_page": "40"}
 
-    if sha:
-        params["head_sha"] = sha
-    elif branch:
-        params["branch"] = branch
-    else:
-        params["branch"] = git_branch()
+        if sha:
+            params["head_sha"] = sha
+        elif branch:
+            params["branch"] = branch
+        else:
+            params["branch"] = git_branch()
 
-    url += "?" + urllib.parse.urlencode(params)
-    return url
+        url += "?" + urllib.parse.urlencode(params)
+        github_urls.append(url)
+
+    if not github_urls:
+        fatal(f"Couldn't find GitHub repo from remote urls: {repo_urls!r}")
+
+    return github_urls
 
 
 class GhaWatcher:
-    def __init__(self, url, get_data):
-        self.url = url
+    def __init__(self, urls, get_data):
+        self.urls = urls
         self.get_data = get_data
         self.status = 0
         self.error = None
@@ -178,7 +186,7 @@ class GhaWatcher:
         stream = io.StringIO()
 
         self.done, self.succeeded = draw_runs(
-            self.url,
+            self.urls,
             datafn=self.get_data,
             outfn=lambda s: print(s, file=stream),
         )

@@ -15,9 +15,15 @@ def _dulwich_repo(dir="."):
     return _repo
 
 
-def git_repo_url(dir):
-    return dulwich.porcelain.get_remote_repo(_dulwich_repo(dir))[1]
+def git_repo_urls(dir):
+    """Find all the remote URLs for a git repo at `dir`."""
+    config = _dulwich_repo(dir).get_config()
+    for section in config.sections():
+        if section[0] == b"remote":
+            url = config.get(section, "url").decode()
+            yield url
 
 
 def git_branch():
+    """Get the current git branch name."""
     return dulwich.porcelain.active_branch(_dulwich_repo()).decode()

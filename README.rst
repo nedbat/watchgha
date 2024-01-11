@@ -3,8 +3,8 @@ Watch GitHub Action runs
 ########################
 
 This package provides one command, ``watch_gha_runs``.  It displays the status
-of the latest GitHub Action runs your current branch.  If any of the runs are
-in progress, it will refresh the display repeatedly with the latest status.
+of the latest GitHub Action runs on your current branch.  If any of the runs
+are in progress, it will refresh the display repeatedly with the latest status.
 
 If you like, the name can be pronounced, "Watching? Ha!"
 
@@ -18,10 +18,12 @@ I suggest installing with `pipx`_:
 
     $ pipx install watchgha
 
-Now you have a command ``watch_gha_runs`` available.
+Now you have a command ``watch_gha_runs`` available.  It will check all GitHub
+remotes for the current directory's repo, and find action runs for the current
+branch.
 
 For complex defaulting, you can use a `git alias`_.  For example, this provides
-the same defaults, but can be adapted:
+similar defaults, but can be adapted:
 
 .. code-block:: ini
 
@@ -171,6 +173,9 @@ Changelog
 
 Unreleased
 ----------
+
+- Now all GitHub remotes are checked for jobs.  Previously, only one was
+  checked, so you wouldn't see jobs running on an upstream fork.
 
 - The output is now redrawn immediately when the terminal window is resized (on
   Mac or Linux).  Thanks, `Bill Mill <pull 14_>`_.
