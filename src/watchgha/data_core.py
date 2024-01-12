@@ -210,6 +210,11 @@ def draw_events(events, outfn):
                         else:
                             if steps:
                                 current_step = steps[-1]["name"]
+                            elif (
+                                job["status"] == "completed"
+                                and job["conclusion"] == "skipped"
+                            ):
+                                current_step = "skipped"
                             else:
                                 current_step = "-None-"
 
