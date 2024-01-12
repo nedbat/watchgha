@@ -39,7 +39,10 @@ class Http:
         if token:
             self.headers["Authorization"] = f"Bearer {token}"
         else:
-            self.auth = httpx.NetRCAuth()
+            try:
+                self.auth = httpx.NetRCAuth()
+            except FileNotFoundError:
+                self.auth = None
 
     async def get_data(self, url):
         async with httpx.AsyncClient(auth=self.auth) as client:

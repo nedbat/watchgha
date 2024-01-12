@@ -182,6 +182,14 @@ Changelog
 
 .. scriv-start-here
 
+Unreleased
+----------
+
+- Fix: don't fail if a .netrc file can't be found. Fixes `issue 18`_.
+
+.. _issue 18: https://github.com/nedbat/watchgha/issues/18
+
+
 2.2.0 — 2024-01-11
 ------------------
 
