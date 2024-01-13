@@ -187,7 +187,11 @@ Unreleased
 
 - Fix: don't fail if a .netrc file can't be found. Fixes `issue 18`_.
 
+- Fix: in the odd case of duplicate remotes, don't list workflow runs twice.
+  Fixes `issue 19`_.
+
 .. _issue 18: https://github.com/nedbat/watchgha/issues/18
+.. _issue 19: https://github.com/nedbat/watchgha/issues/19
 
 
 2.2.0 — 2024-01-11

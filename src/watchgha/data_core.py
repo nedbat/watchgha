@@ -105,6 +105,11 @@ async def get_events(urls, only_words, datafn):
         for url in urls:
             nursery.start_soon(runs_from_url, url)
 
+    # In odd situations (duplicate remotes) we can get the same run more than
+    # once. De-duplicate them.
+    runs_by_id = {r["id"]: r for r in runs}
+    runs = list(runs_by_id.values())
+
     async with trio.open_nursery() as nursery:
         for run in runs:
             run["started_dt"] = to_datetime(run["run_started_at"])
