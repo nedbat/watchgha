@@ -182,8 +182,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.2.1 – 2024-01-14
+------------------
 
 - Fix: don't fail if a .netrc file can't be found. Fixes `issue 18`_.
 
