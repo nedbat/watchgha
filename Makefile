@@ -84,7 +84,7 @@ _check_version: _pip_install_e
 
 tag: _pip_install_e ## Make a git tag with the version number
 	@export VER="$$(python -c "import watchgha as me; print(me.__version__)")" && \
-	git tag -a -m "Version $$VER" $$VER
+	git tag -s -m "Version $$VER" $$VER
 	git push --all
 
 gh_release:	## Publish a GitHub release
