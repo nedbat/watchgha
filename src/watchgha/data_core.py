@@ -48,6 +48,7 @@ STEPDOTS = {
     "cancelled": "[red]\N{DAGGER}[/]",
     "failure": "[red]\N{BULLET}[/]",
     "in_progress": "[white]\N{BULLET}[/]",
+    "pending": "[dim white]\N{BULLET}[/]",
     "queued": "[dim white]\N{BULLET}[/]",
     "skipped": "[default]\N{WHITE BULLET}[/]",
     "success": "[green]\N{BULLET}[/]",
