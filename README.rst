@@ -182,6 +182,13 @@ Changelog
 
 .. scriv-start-here
 
+2.2.2 – 2024-02-03
+------------------
+
+- Fix: steps can be in a "pending" state, and are now displayed with a dot
+  instead of "pending".
+
+
 2.2.1 – 2024-01-14
 ------------------
 
