@@ -8,7 +8,7 @@ import dulwich.porcelain
 import dulwich.repo
 
 
-@functools.lru_cache
+@functools.lru_cache(maxsize=10)
 def _dulwich_repo(dir="."):
     return dulwich.repo.Repo(dir)
 
