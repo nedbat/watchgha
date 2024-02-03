@@ -43,6 +43,10 @@ _check_credentials:
 		echo 'Missing TWINE_PASSWORD: opvars'; \
 		exit 1; \
 	fi
+	@if [[ -z "$$GITHUB_TOKEN" ]]; then \
+		echo 'Missing GITHUB_TOKEN: opvars github'; \
+		exit 1; \
+	fi
 
 check_release: _check_manifest _check_tree _check_readme _check_version	## Check that we are ready for a release
 	@echo "Release checks passed"
