@@ -210,7 +210,7 @@ def draw_events(events, outfn):
                                 stepdots = ""
                                 for s in steps:
                                     ssum = summary_style_icon(s)[0]
-                                    stepdots += STEPDOTS.get(ssum, ssum)
+                                    stepdots += STEPDOTS.get(ssum, "?")
                                 current_step = f" {step['name']}"
                                 break
                         else:
