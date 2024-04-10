@@ -186,6 +186,19 @@ Changelog
 
 .. scriv-start-here
 
+Unreleased
+----------
+
+- GitHub Enterprise is supported via ``GITHUB_SERVER_URL`` and
+  ``GITHUB_API_URL`` environment variables.
+  Thanks, `Colin Marquardt <pull 21_>`_.
+
+- Fix: in unusual cases, GitHub can return strange statuses for job steps.
+  Those are now displayed as question marks.
+
+.. _pull 21: https://github.com/nedbat/watchgha/pull/21
+
+
 2.2.2 – 2024-02-03
 ------------------
 

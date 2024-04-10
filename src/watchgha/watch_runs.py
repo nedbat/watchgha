@@ -131,14 +131,16 @@ def gha_urls(repo, branch, sha):
         # repo_url = "https://github.com/owner/repo.git"
         # repo_url = "git@github.com:someorg/somerepo.git"
         # see also https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
+        server_url = os.getenv("GITHUB_SERVER_URL", "https://github.com")
         repo_match = re.fullmatch(
-            rf"(?:{os.getenv('GITHUB_SERVER_URL', 'https://github.com')}/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?",
+            rf"(?:{re.escape(server_url)}/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?",
             repo_url,
         )
         if repo_match is None:
             continue
 
-        url = f"{os.getenv('GITHUB_API_URL', 'https://api.github.com')}/repos/{repo_match[1]}/actions/runs?{url_args}"
+        api_url = os.getenv("GITHUB_API_URL", "https://api.github.com")
+        url = f"{api_url}/repos/{repo_match[1]}/actions/runs?{url_args}"
         github_urls.append(url)
 
     if not github_urls:
