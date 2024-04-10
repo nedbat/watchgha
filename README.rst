@@ -186,8 +186,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.3.0 – 2024-04-10
+------------------
 
 - GitHub Enterprise is supported via ``GITHUB_SERVER_URL`` and
   ``GITHUB_API_URL`` environment variables.
