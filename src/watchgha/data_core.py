@@ -100,7 +100,11 @@ async def get_events(urls, only_words, datafn):
     runs = []
 
     async def runs_from_url(url):
-        runs.extend(json.loads(await datafn(url))["workflow_runs"])
+        async for payload in datafn(url):
+            with open("/tmp/foo.out", "a") as f:
+                print(payload, file=f) 
+            runs.extend(json.loads(payload)["workflow_runs"])
+            break
 
     async with trio.open_nursery() as nursery:
         for url in urls:
