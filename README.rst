@@ -180,6 +180,7 @@ Changelog
 
 .. Release process:
     - This changelog is updated manually, not with scriv.
+    - Bump the version in src/watchgha/__init__.py
     - Comments are added manually to GitHub issues and pull requests.
     - Use `make check_release` to see if everything is ready for a release.
     - Use `make release` to release a new version.
