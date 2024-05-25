@@ -186,6 +186,13 @@ Changelog
 
 .. scriv-start-here
 
+2.3.1 – 2024-05-25
+------------------
+
+- Workflows with many jobs could be truncated.  There is still a limit of 100
+  jobs, but that is better than the earlier limit of 30.
+
+
 2.3.0 – 2024-04-10
 ------------------
 

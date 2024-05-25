@@ -118,7 +118,7 @@ def gha_urls(repo, branch, sha):
     else:
         fatal(f"Don't understand repo {repo!r}")
 
-    params = {"per_page": "40"}
+    params = {"per_page": "100"}
     if sha:
         params["head_sha"] = sha
     else:

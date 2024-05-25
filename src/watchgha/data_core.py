@@ -151,7 +151,7 @@ async def get_events(urls, only_words, datafn):
             run_names_seen.update(these_runs_names)
 
             async def load_run(run):
-                run["jobs"] = json.loads(await datafn(run["jobs_url"]))["jobs"]
+                run["jobs"] = json.loads(await datafn(run["jobs_url"] + "?per_page=100"))["jobs"]
 
             for run in event_runs:
                 summary, _, _ = summary_style_icon(run)
