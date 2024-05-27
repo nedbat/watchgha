@@ -39,6 +39,10 @@ Now ``git runs`` will show a live display of the current runs on your branch.
 You can authenticate against GitHub if needed using either an entry in your
 .netrc file, or by setting the ``GITHUB_TOKEN`` environment variable.
 
+No authentication is needed for public repos.  For private repos, OAuth or
+classic tokens need the ``repo`` scope, and fine-grained tokens need the
+"Actions (read)" repository permission.
+
 If you use GitHub Enterprise, you can set the environment variables
 ``GITHUB_SERVER_URL`` (default: ``https://github.com``) and
 ``GITHUB_API_URL`` (default: ``https://api.github.com``)
