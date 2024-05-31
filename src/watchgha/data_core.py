@@ -81,7 +81,7 @@ def run_sort_key(run_data):
     )
 
 
-def draw_runs(urls, only_words, datafn, outfn):
+def draw_runs(urls, datafn, outfn, only_words=None):
     # Workflow runs is a flat list of runs.  We bucket them by time started,
     # sha, and event to create "events".  Each event has a number of runs, each
     # run has a number of jobs, each job has a number of steps. They end up
@@ -91,12 +91,12 @@ def draw_runs(urls, only_words, datafn, outfn):
     #       outcome run-name, url
     #           job-name     current-step-or-outcome
 
-    events = trio.run(get_events, urls, only_words, datafn)
+    events = trio.run(get_events, urls, datafn, only_words)
     done, succeeded = draw_events(events, outfn)
     return done, succeeded
 
 
-async def get_events(urls, only_words, datafn):
+async def get_events(urls, datafn, only_words):
     runs = []
 
     async def runs_from_url(url):

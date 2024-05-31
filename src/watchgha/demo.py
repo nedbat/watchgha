@@ -6,6 +6,8 @@ Run from the command line with:
 
 """
 
+import datetime
+import itertools
 import json
 
 import rich.console
@@ -13,19 +15,22 @@ import rich.console
 from .data_core import FINISHED, draw_runs
 
 
+next_id = itertools.count().__next__
+
 RUN_COMMON = {
     "display_title": "fix: most awesome fix",
     "head_branch": "nedbat/test",
     "html_url": "https://github.com/owner/repo/actions/runs/123456789",
     "event": "push",
     "head_sha": "4b2ff58124791953563fdb52e40d9ab79d274d9a",
-    "run_started_at": "2023-07-02T13:49:27Z",
+    "run_started_at": datetime.datetime.now().isoformat(timespec='seconds') + "Z"
 }
 
 DEMO_DATA = {
     "demo:one": {
         "workflow_runs": [
             {
+                "id": next_id(),
                 **RUN_COMMON,
                 "name": "Test suite",
                 "status": "in_progress",
@@ -33,6 +38,7 @@ DEMO_DATA = {
             },
             *[
                 {
+                    "id": next_id(),
                     **RUN_COMMON,
                     "name": f"A {conc} run",
                     "status": "completed",
@@ -116,12 +122,13 @@ DEMO_DATA = {
 
 
 async def demo_datafn(url):
+    url = url.partition("?")[0]
     return json.dumps(DEMO_DATA[url])
 
 
 def demo():
     console = rich.console.Console(highlight=False)
-    draw_runs("demo:one", datafn=demo_datafn, outfn=console.print)
+    draw_runs(["demo:one"], datafn=demo_datafn, outfn=console.print)
 
 
 if __name__ == "__main__":

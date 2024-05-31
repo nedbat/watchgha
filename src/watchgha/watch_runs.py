@@ -207,8 +207,8 @@ class GhaWatcher:
 
         self.done, self.succeeded = draw_runs(
             self.urls,
-            only_words=self.only_words,
             datafn=self.get_data_fn,
             outfn=lambda s: print(s, file=stream),
+            only_words=self.only_words,
         )
         return stream.getvalue()
