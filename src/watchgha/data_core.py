@@ -39,9 +39,10 @@ CICONS = {
     "in_progress": "\N{CLOCKWISE OPEN CIRCLE ARROW}",
     "pending": "\N{TIMER CLOCK}",
     "queued": "\N{TIMER CLOCK}",
-    "skipped": "\N{BALLOT BOX}",
+    "skipped": "\N{BLACK RIGHT-POINTING DOUBLE TRIANGLE WITH VERTICAL BAR}",
     "startup_failure": "\N{BALLOT X}",
     "success": "\N{CHECK MARK}",
+    "waiting": "\N{OCTAGONAL SIGN}",
 }
 
 STEPDOTS = {
@@ -221,8 +222,6 @@ def draw_events(events, outfn):
                                 and job["conclusion"] == "skipped"
                             ):
                                 current_step = "skipped"
-                            else:
-                                current_step = "-None-"
 
                 j = DictAttr(job)
                 outfn(
