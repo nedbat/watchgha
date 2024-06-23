@@ -135,7 +135,7 @@ def gha_urls(repo, branch=None, sha=None):
         # see also https://docs.github.com/en/actions/learn-github-actions/variables#default-environment-variables
         server_url = os.getenv("GITHUB_SERVER_URL", "https://github.com")
         repo_match = re.fullmatch(
-            rf"(?:{re.escape(server_url)}/|git@github.com:)([^/]+/[^/]+?)(?:\.git|/)?",
+            rf"(?:{re.escape(server_url)}|git@github.com)[/:]?([^/]+/[^/]+?)(?:\.git|/)?",
             repo_url,
         )
         if repo_match is None:

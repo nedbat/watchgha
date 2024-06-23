@@ -194,9 +194,14 @@ Changelog
 Unreleased
 ----------
 
+- GITHUB_SERVER_URL's like "git@git.mydomain.com" are now correctly parsed,
+  closing `issue 22`_.
+
 - Added a stop sign emoji for jobs in the Waiting state.
 
 - Most fatal errors now result in a status code of 1. It was mistakenly 2.
+
+.. _issue 22: https://github.com/nedbat/watchgha/issues/22
 
 
 2.3.1 – 2024-05-25

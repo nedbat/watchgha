@@ -39,6 +39,11 @@ FAKE_REPOS = {
             "https://mygithub.enterprise.com/me/myproject",
         ],
     },
+    "dir-bug22": {
+        "urls": [
+            "git@git.mydomain.com:davidszotten/davidrepo",
+        ],
+    },
 }
 
 
@@ -118,6 +123,16 @@ def mocked_gha_urls_dependencies(monkeypatch):
             },
             [
                 "https://api.mygithub.enterprise.com/repos/me/myproject/actions/runs?per_page=100&branch=master",
+            ],
+        ),
+        (
+            ["dir-bug22"],
+            {
+                "GITHUB_SERVER_URL": "git@git.mydomain.com",
+                "GITHUB_API_URL": "https://githubapi.mydomain.com",
+            },
+            [
+                "https://githubapi.mydomain.com/repos/davidszotten/davidrepo/actions/runs?per_page=100&branch=master",
             ],
         ),
     ],
