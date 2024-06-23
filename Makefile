@@ -14,6 +14,9 @@ clean: 	## Remove stuff we don't need.
 tools:	## Install the development tools.
 	python -m pip install -r dev-requirements.txt
 
+test:	## Run the tests
+	coverage run -m pytest
+
 dist: 	## Build the distributions.
 	python -m build --sdist --wheel
 	python -m twine check dist/*

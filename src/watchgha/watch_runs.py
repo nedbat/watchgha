@@ -9,11 +9,13 @@ older than a week are not considered.
 
 import contextlib
 import io
-import os.path
+import os
 import re
 import signal
 import sys
 import urllib.parse
+
+from os.path import isdir
 
 import click
 import exceptiongroup
@@ -105,9 +107,9 @@ def main(sha, poll, wait_for_start, only, repo, branch):
     watcher.watch(wait_for_start, poll, console)
 
 
-def gha_urls(repo, branch, sha):
+def gha_urls(repo, branch=None, sha=None):
     """Figure out the GHA api URLs to use for `repo`, `branch`, and `sha`."""
-    if os.path.isdir(repo):
+    if isdir(repo):
         repo_urls = list(git_repo_urls(repo))
         if branch is None:
             branch = git_branch(repo)
@@ -144,7 +146,7 @@ def gha_urls(repo, branch, sha):
         github_urls.append(url)
 
     if not github_urls:
-        fatal(f"Couldn't find GitHub repo from remote urls: {repo_urls!r}")
+        fatal(f"Couldn't find GitHub repo from remote URLs: {repo_urls!r}")
 
     return github_urls
 

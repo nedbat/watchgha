@@ -59,3 +59,6 @@ format = "rst"
 output_file = "README.rst"
 insert_marker = "scriv-start-here"
 end_marker = "scriv-end-here"
+
+[tool.coverage.run]
+branch = true
