@@ -191,8 +191,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.3.2 – 2024-06-23
+------------------
 
 - GITHUB_SERVER_URL's like "git@git.mydomain.com" are now correctly parsed,
   closing `issue 22`_.
