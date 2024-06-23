@@ -29,7 +29,7 @@ console = rich.console.Console(highlight=False)
 error_console = rich.console.Console(stderr=True, highlight=False)
 
 
-def fatal(msg, status=2):
+def fatal(msg, status=1):
     error_console.print(msg)
     sys.exit(status)
 
