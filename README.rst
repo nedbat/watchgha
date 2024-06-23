@@ -191,6 +191,12 @@ Changelog
 
 .. scriv-start-here
 
+Unreleased
+----------
+
+- Added a stop sign emoji for jobs in the Waiting state.
+
+
 2.3.1 – 2024-05-25
 ------------------
 
