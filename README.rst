@@ -198,6 +198,7 @@ Unreleased
   now we sort them by name.  This isn't the same order as the UI, but is more
   understandable than the random order returned by the API.
 
+- Dropped support for Python 3.7 and 3.8.
 
 2.3.2 – 2024-06-23
 ------------------
