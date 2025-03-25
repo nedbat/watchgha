@@ -9,10 +9,12 @@ help: 	## Display this help message.
 clean: 	## Remove stuff we don't need.
 	find . -name '__pycache__' -exec rm -rf {} +
 	rm -fr build/ dist/ src/*.egg-info
+	rm -fr .coverage htmlcov/
+	rm -fr .pytest_cache/
 	rm -f get_*.json get_index.txt
 
 tools:	## Install the development tools.
-	python -m pip install -r dev-requirements.txt
+	python -m pip install -U --upgrade-strategy=eager -r dev-requirements.txt
 
 test:	## Run the tests
 	coverage run -m pytest
