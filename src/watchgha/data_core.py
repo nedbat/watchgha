@@ -7,7 +7,7 @@ import json
 import trio
 
 from .bucketer import DatetimeBucketer
-from .utils import nice_time, to_datetime, DictAttr
+from .utils import human_key, nice_time, to_datetime, DictAttr
 
 
 bucketer = DatetimeBucketer(5)
@@ -82,6 +82,13 @@ def run_sort_key(run_data):
     )
 
 
+def job_sort_key(job_data):
+    return (
+        bucketer.defuzz(job_data["created_dt"]),
+        human_key(job_data["name"]),
+    )
+
+
 def draw_runs(urls, datafn, outfn, only_words=None):
     # Workflow runs is a flat list of runs.  We bucket them by time started,
     # sha, and event to create "events".  Each event has a number of runs, each
@@ -152,7 +159,10 @@ async def get_events(urls, datafn, only_words):
             run_names_seen.update(these_runs_names)
 
             async def load_run(run):
-                run["jobs"] = json.loads(await datafn(run["jobs_url"] + "?per_page=100"))["jobs"]
+                jobs = json.loads(await datafn(run["jobs_url"] + "?per_page=100"))["jobs"]
+                for job in jobs:
+                    job["created_dt"] = to_datetime(job["created_at"])
+                run["jobs"] = sorted(jobs, key=job_sort_key)
 
             for run in event_runs:
                 summary, _, _ = summary_style_icon(run)

@@ -1,4 +1,5 @@
 import datetime
+import re
 import time
 
 
@@ -51,3 +52,21 @@ class Interval:
         self.last_time = now
         if delay > 0:
             time.sleep(delay)
+
+
+def human_key(s):
+    """Turn a string into a sortable value that works how humans expect.
+
+    "z23A" -> (["z", 23, "a"], "z23A")
+
+    The original string is appended as a last value to ensure the
+    key is unique enough so that "x1y" and "x001y" can be distinguished.
+    """
+    def tryint(s: str) -> str | int:
+        """If `s` is a number, return an int, else `s` unchanged."""
+        try:
+            return int(s)
+        except ValueError:
+            return s
+
+    return ([tryint(c) for c in re.split(r"(\d+)", s.casefold())], s)
