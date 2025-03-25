@@ -191,8 +191,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.4.0 – 2025-03-25
+------------------
 
 - GitHub no longer reports jobs in the same nice order as their UI shows, so
   now we sort them by name.  This isn't the same order as the UI, but is more
