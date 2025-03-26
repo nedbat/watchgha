@@ -191,8 +191,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.4.1 – 2025-03-26
+------------------
 
 - Printed data now has control characters scrubbed, to prevent against
   extremely unlikely terminal attacks.
