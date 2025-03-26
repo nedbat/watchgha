@@ -17,29 +17,35 @@ from .data_core import FINISHED, draw_runs
 
 next_id = itertools.count().__next__
 
-RUN_COMMON = {
-    "display_title": "fix: most awesome fix",
-    "head_branch": "nedbat/test",
-    "html_url": "https://github.com/owner/repo/actions/runs/123456789",
-    "event": "push",
-    "head_sha": "4b2ff58124791953563fdb52e40d9ab79d274d9a",
-    "run_started_at": datetime.datetime.now().isoformat(timespec='seconds') + "Z"
-}
+def run_common():
+    return {
+        "id": next_id(),
+        "display_title": "fix: most awesome fix",
+        "head_branch": "nedbat/test",
+        "html_url": "https://github.com/owner/repo/actions/runs/123456789",
+        "event": "push",
+        "head_sha": "4b2ff58124791953563fdb52e40d9ab79d274d9a",
+        "run_started_at": datetime.datetime.now().isoformat(timespec='seconds') + "Z"
+    }
+
+def job_common():
+    return {
+        "id": next_id(),
+        "created_at": datetime.datetime.now().isoformat(timespec='seconds') + "Z"
+    }
 
 DEMO_DATA = {
     "demo:one": {
         "workflow_runs": [
             {
-                "id": next_id(),
-                **RUN_COMMON,
+                **run_common(),
                 "name": "Test suite",
                 "status": "in_progress",
                 "jobs_url": "demo:jobs_tests",
             },
             *[
                 {
-                    "id": next_id(),
-                    **RUN_COMMON,
+                    **run_common(),
                     "name": f"A {conc} run",
                     "status": "completed",
                     "conclusion": conc,
@@ -52,6 +58,7 @@ DEMO_DATA = {
     "demo:jobs_1": {
         "jobs": [
             {
+                **job_common(),
                 "name": "Just one job",
                 "status": "queued",
             },
@@ -60,15 +67,18 @@ DEMO_DATA = {
     "demo:jobs_tests": {
         "jobs": [
             {
+                **job_common(),
                 "name": "A delayed job",
                 "status": "queued",
             },
             {
+                **job_common(),
                 "name": "A finished job",
                 "status": "completed",
                 "conclusion": "success",
             },
             {
+                **job_common(),
                 "name": "A failed job",
                 "status": "completed",
                 "conclusion": "failure",
@@ -89,6 +99,7 @@ DEMO_DATA = {
             },
             *[
                 {
+                    **job_common(),
                     "name": f"Test suite Py 3.{py}",
                     "status": "in_progress",
                     "steps": [
