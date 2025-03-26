@@ -3,6 +3,7 @@
 import datetime
 import itertools
 import json
+import re
 
 import trio
 
@@ -100,7 +101,12 @@ def draw_runs(urls, datafn, outfn, only_words=None):
     #           job-name     current-step-or-outcome
 
     events = trio.run(get_events, urls, datafn, only_words)
-    done, succeeded = draw_events(events, outfn)
+
+    def safe_outfn(s):
+        """Scrub control characters from lines of output."""
+        outfn(re.sub(r"[\x00-\x1f\x7f-\x9f]", "", s))
+
+    done, succeeded = draw_events(events, safe_outfn)
     return done, succeeded
 
 

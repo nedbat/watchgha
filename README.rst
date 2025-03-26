@@ -194,6 +194,9 @@ Changelog
 Unreleased
 ----------
 
+- Printed data now has control characters scrubbed, to prevent against
+  extremely unlikely terminal attacks.
+
 - Oops, it didn't work on Python 3.9, now fixed.
 
 2.4.0 – 2025-03-25

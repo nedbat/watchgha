@@ -53,6 +53,12 @@ DEMO_DATA = {
                 }
                 for conc in FINISHED
             ],
+            {
+                **run_common(),
+                "name": "Malicious \n\n\n\n data",
+                "status": "in_progress",
+                "jobs_url": "demo:jobs_malicious",
+            },
         ],
     },
     "demo:jobs_1": {
@@ -127,6 +133,15 @@ DEMO_DATA = {
                 }
                 for py in [8, 9, 10, 11]
             ],
+        ],
+    },
+    "demo:jobs_malicious": {
+        "jobs": [
+            {
+                **job_common(),
+                "name": "A \x1B[1mMALICIOUS\x1B[0m job",
+                "status": "queued",
+            },
         ],
     },
 }
