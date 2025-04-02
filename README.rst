@@ -1,3 +1,6 @@
+| |kit| |versions|
+| |sponsor| |bluesky-nedbat| |mastodon-nedbat|
+
 ########################
 Watch GitHub Action runs
 ########################
@@ -389,3 +392,22 @@ choices. So I wrote my own.
 .. _gh run command: https://cli.github.com/manual/gh_run
 .. _git alias: https://www.atlassian.com/git/tutorials/git-alias
 .. _pipx: https://pypi.org/project/pipx/
+
+.. |kit| image:: https://img.shields.io/pypi/v/watchgha
+    :target: https://pypi.org/project/watchgha/
+    :alt: PyPI status
+.. |versions| image:: https://img.shields.io/pypi/pyversions/watchgha.svg?logo=python&logoColor=FBE072
+    :target: https://pypi.org/project/watchgha/
+    :alt: Python versions supported
+.. |license| image:: https://img.shields.io/pypi/l/watchgha.svg
+    :target: https://pypi.org/project/watchgha/
+    :alt: License
+.. |sponsor| image:: https://img.shields.io/badge/%E2%9D%A4-Sponsor%20me-brightgreen?style=flat&logo=GitHub
+    :target: https://github.com/sponsors/nedbat
+    :alt: Sponsor me on GitHub
+.. |bluesky-nedbat| image:: https://img.shields.io/badge/dynamic/json?style=flat&color=96a3b0&labelColor=3686f7&logo=icloud&logoColor=white&label=@nedbat&url=https%3A%2F%2Fpublic.api.bsky.app%2Fxrpc%2Fapp.bsky.actor.getProfile%3Factor=nedbat.com&query=followersCount
+    :target: https://bsky.app/profile/nedbat.com
+    :alt: nedbat on Bluesky
+.. |mastodon-nedbat| image:: https://img.shields.io/badge/dynamic/json?style=flat&labelColor=450657&logo=mastodon&logoColor=ffffff&label=@nedbat&query=followers_count&url=https%3A%2F%2Fhachyderm.io%2Fapi%2Fv1%2Faccounts%2Flookup%3Facct=nedbat
+    :target: https://hachyderm.io/@nedbat
+    :alt: nedbat on Mastodon
