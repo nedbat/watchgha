@@ -15,6 +15,8 @@ bucketer = DatetimeBucketer(5)
 
 CSTYLES = {
     "failure": "red bold",
+    "pending": "dim",
+    "queued": "dim",
     "startup_failure": "red bold",
     "success": "green bold",
 }
