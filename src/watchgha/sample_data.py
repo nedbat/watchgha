@@ -6,7 +6,7 @@ from .data_core import FINISHED, draw_runs
 
 next_id = itertools.count().__next__
 
-NOW = datetime.datetime.fromisoformat("2025-03-26T16:55:59")
+NOW = datetime.datetime.now().replace(hour=16, minute=55, second=30)
 
 def next_isodatetime():
     # The sample data makes ~16 datetimes.  We want them all to be within 5
