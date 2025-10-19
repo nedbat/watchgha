@@ -10,7 +10,7 @@ def test_sample_data():
         sample(outfn=lambda s: print(s, file=stream))
 
         expected = dedent("""\
-            [white bold]fix: most awesome fix[/] nedbat/test \\[push]   [dim]4b2ff5812479  @12:55pm[/]
+            [white bold]fix: most awesome fix[/] nedbat/test \\[push]   [dim]4b2ff5812479  @04:55pm[/]
                [default]↻ in_progress [/] [white bold]Test suite      [/]   [blue link=https://github.com/owner/repo/actions/runs/123456789]view 123456789[/]
                   A delayed job                  [dim]⏲[/] [dim]queued[/]
                   A failed job                   [red bold]✗[/] [red bold]failure Didn't work[/]

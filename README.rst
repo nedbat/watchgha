@@ -371,8 +371,13 @@ First version
 Development
 ===========
 
-The code is a bit messy and undocumented, and there are no tests.  If you want
+The code is a bit messy and undocumented.  If you want
 to change the code, open an issue and let's talk about it.
+
+To run tests::
+
+    $ make tools
+    $ make test
 
 Contributors:
 

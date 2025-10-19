@@ -17,7 +17,7 @@ tools:	## Install the development tools.
 	python -m pip install -U --upgrade-strategy=eager -r dev-requirements.txt
 
 test:	## Run the tests
-	coverage run -m pytest
+	TZ=GMT coverage run -m pytest
 
 dist: 	## Build the distributions.
 	python -m build --sdist --wheel
