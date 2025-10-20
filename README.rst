@@ -194,11 +194,18 @@ Changelog
 
 .. scriv-start-here
 
+2.4.2 – 2025-10-20
+------------------
+
+- Corrected a test that used a hardcoded date, derp.
+
+- Declared support for Python 3.14.
+
 2.4.1 – 2025-03-26
 ------------------
 
-- Printed data now has control characters scrubbed, to prevent against
-  extremely unlikely terminal attacks.
+- Printed data now has control characters scrubbed, to prevent extremely
+  unlikely terminal attacks.
 
 - Oops, it didn't work on Python 3.9, now fixed.
 
