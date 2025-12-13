@@ -21,7 +21,7 @@ import click
 import exceptiongroup
 import rich.console
 
-from .data_core import draw_runs
+from .data_core import Status, draw_runs
 from .git_help import git_repo_urls, git_branch
 from .http_help import get_data
 from .utils import Interval, WatchGhaError
@@ -165,8 +165,7 @@ class GhaWatcher:
         self.error = None
 
     def watch(self, wait_for_start, poll, console):
-        self.done = False
-        self.succeeded = False
+        self.status = Status()
         self.interrupted = False
 
         self.watch_gha_errors = []
@@ -183,25 +182,28 @@ class GhaWatcher:
             while True:
                 output = self.get_gha_display()
                 if wait_for_start:
-                    if not self.done:
+                    if not self.status.done:
                         break
                 else:
                     break
 
-            if not self.done:
+            if not self.status.done:
                 with console.screen() as screen:
                     with handle_resize(lambda: screen.update(output)):
-                        while not self.done:
+                        while not self.status.done:
                             screen.update(output)
+                            self.update_terminal_progress()
                             interval.wait()
                             output = self.get_gha_display()
+
+        self.clear_terminal_progress()
 
         if self.watch_gha_errors:
             fatal(self.watch_gha_errors[0])
         console.print(output, end="")
         if self.interrupted:
             fatal("** interrupted **", status=2)
-        sys.exit(0 if self.succeeded else 1)
+        sys.exit(0 if self.status.succeeded else 1)
 
     def handle_watchghaerror(self, excgroup):
         self.watch_gha_errors.extend(excgroup.exceptions)
@@ -212,7 +214,7 @@ class GhaWatcher:
     def get_gha_display(self):
         stream = io.StringIO()
 
-        self.done, self.succeeded = draw_runs(
+        self.status = draw_runs(
             self.urls,
             datafn=self.get_data_fn,
             outfn=lambda s: print(s, file=stream),
@@ -222,3 +224,16 @@ class GhaWatcher:
         if self.message:
             output = f"{self.message}\n{output}"
         return output
+
+    def update_terminal_progress(self):
+        finished = self.status.num_succeeded + self.status.num_failed
+        percent_done = finished * 100 // self.status.total
+        state = 2 if self.status.num_failed else 1
+        osc_9_4(state, percent_done)
+
+    def clear_terminal_progress(self):
+        osc_9_4(0, 0)
+
+def osc_9_4(st, pr):
+    sys.stdout.write(f"\033]9;4;{st};{pr}\033\\")
+    sys.stdout.flush()

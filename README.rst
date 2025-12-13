@@ -198,6 +198,12 @@ Changelog
 
 .. scriv-start-here
 
+Unreleased
+----------
+
+- Progress is displayed in the terminal with OSC 9;4 escape sequences.
+
+
 2.5.0 – 2025-12-13
 ------------------
 

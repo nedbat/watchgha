@@ -4,6 +4,7 @@ import datetime
 import itertools
 import json
 import re
+from dataclasses import dataclass
 
 import trio
 
@@ -58,6 +59,12 @@ STEPDOTS = {
     "success": "[green]\N{BULLET}[/]",
 }
 
+# Conclusion states to mark as bad.
+CONCLUSION_BAD = {
+    "failure",
+    "startup_failure",
+    "cancelled",
+}
 
 def summary_style_icon(data):
     summary = data["status"]
@@ -92,6 +99,15 @@ def job_sort_key(job_data):
     )
 
 
+@dataclass
+class Status:
+    done: bool = False
+    succeeded: bool = False
+    total: int = 0
+    num_succeeded: int = 0
+    num_failed: int = 0
+
+
 def draw_runs(urls, datafn, outfn, only_words=None):
     # Workflow runs is a flat list of runs.  We bucket them by time started,
     # sha, and event to create "events".  Each event has a number of runs, each
@@ -108,8 +124,19 @@ def draw_runs(urls, datafn, outfn, only_words=None):
         """Scrub control characters from lines of output."""
         outfn(re.sub(r"[\x00-\x1f\x7f-\x9f]", "", s))
 
-    done, succeeded = draw_events(events, safe_outfn)
-    return done, succeeded
+    status = Status()
+    for runs in events:
+        for run in runs:
+            for job in run["jobs"]:
+                status.total += 1
+                if job["status"] == "completed":
+                    if job["conclusion"] in CONCLUSION_BAD:
+                        status.num_failed += 1
+                    else:
+                        status.num_succeeded += 1
+
+    status.done, status.succeeded = draw_events(events, safe_outfn)
+    return status
 
 
 async def get_events(urls, datafn, only_words):
@@ -173,9 +200,7 @@ async def get_events(urls, datafn, only_words):
                 run["jobs"] = sorted(jobs, key=job_sort_key)
 
             for run in event_runs:
-                summary, _, _ = summary_style_icon(run)
-                if summary != "success":
-                    nursery.start_soon(load_run, run)
+                nursery.start_soon(load_run, run)
 
     return events
 
