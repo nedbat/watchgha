@@ -70,7 +70,9 @@ def handle_resize(handler):
     default=15,
     show_default=True,
 )
-@click.option("--wait-for-start", is_flag=True, help="Wait for jobs to start.")
+@click.option(
+    "--wait", "--wait-for-start", is_flag=True, help="Wait for jobs to start."
+)
 @click.option(
     "--only",
     help=(
@@ -81,7 +83,7 @@ def handle_resize(handler):
 )
 @click.argument("repo", default=".")
 @click.argument("branch", required=False)
-def main(sha, poll, wait_for_start, only, repo, branch):
+def main(sha, poll, wait, only, repo, branch):
     """
     Watch GitHub Action runs.
 
@@ -104,7 +106,7 @@ def main(sha, poll, wait_for_start, only, repo, branch):
         only_words=only_words,
     )
 
-    watcher.watch(wait_for_start, poll, console)
+    watcher.watch(wait, poll, console)
 
 
 def gha_urls(repo, branch=None, sha=None):

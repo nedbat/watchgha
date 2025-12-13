@@ -83,15 +83,17 @@ Usage
       BRANCH is defaulted from the git repo.
 
     Options:
-      --sha TEXT        The commit SHA to use. Must be a full SHA.
-      --poll INTEGER    How many seconds between refreshes.  [default: 15]
-      --wait-for-start  Wait for jobs to start.
-      --only TEXT       Words to limit the workflows shown. Only workflows
-                        with these comma separated case insensitive
-                        substrings in their names will be shown.
-      --help            Show this message and exit.
+      --sha TEXT                The commit SHA to use. Must be a full SHA.
+      --poll INTEGER            How many seconds between refreshes.
+                                [default: 15]
+      --wait, --wait-for-start  Wait for jobs to start.
+      --only TEXT               Words to limit the workflows shown. Only
+                                workflows with these comma separated case
+                                insensitive substrings in their names will
+                                be shown.
+      --help                    Show this message and exit.
 
-.. [[[end]]] (checksum: 7ccf840e890086fd0b4774b4ef1ac15a)
+.. [[[end]]] (sum: 9YV+HziN8+)
 
 
 Display
@@ -193,6 +195,14 @@ Changelog
     - Use `make release` to release a new version.
 
 .. scriv-start-here
+
+Unreleased
+----------
+
+- The option ``--wait-for-start`` can now be shortened tp ``--wait``,
+  implementing the good idea from `issue 27`_.
+
+.. _issue 27: https://github.com/nedbat/watchgha/issues/27
 
 2.4.2 – 2025-10-20
 ------------------
