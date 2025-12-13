@@ -198,8 +198,8 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.5.0 – 2025-12-13
+------------------
 
 - A new option ``--message`` lets you provide a line of text to display at the
   top of the output.
