@@ -91,9 +91,11 @@ Usage
                                 workflows with these comma separated case
                                 insensitive substrings in their names will
                                 be shown.
+      --message TEXT            A message to display at the top of the
+                                screen.
       --help                    Show this message and exit.
 
-.. [[[end]]] (sum: 9YV+HziN8+)
+.. [[[end]]] (sum: 9LxE5cjkve)
 
 
 Display
@@ -198,6 +200,9 @@ Changelog
 
 Unreleased
 ----------
+
+- A new option ``--message`` lets you provide a line of text to display at the
+  top of the output.
 
 - The option ``--wait-for-start`` can now be shortened tp ``--wait``,
   implementing the good idea from `issue 27`_.

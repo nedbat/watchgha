@@ -81,9 +81,10 @@ def handle_resize(handler):
         + "in their names will be shown."
     ),
 )
+@click.option("--message", help="A message to display at the top of the screen.")
 @click.argument("repo", default=".")
 @click.argument("branch", required=False)
-def main(sha, poll, wait, only, repo, branch):
+def main(sha, poll, wait, only, message, repo, branch):
     """
     Watch GitHub Action runs.
 
@@ -104,6 +105,7 @@ def main(sha, poll, wait, only, repo, branch):
         urls=gha_urls(repo, branch, sha),
         get_data_fn=get_data,
         only_words=only_words,
+        message=message,
     )
 
     watcher.watch(wait, poll, console)
@@ -154,10 +156,11 @@ def gha_urls(repo, branch=None, sha=None):
 
 
 class GhaWatcher:
-    def __init__(self, urls, get_data_fn, only_words):
+    def __init__(self, urls, get_data_fn, only_words, message):
         self.urls = urls
         self.get_data_fn = get_data_fn
         self.only_words = only_words
+        self.message = message
         self.status = 0
         self.error = None
 
@@ -215,4 +218,7 @@ class GhaWatcher:
             outfn=lambda s: print(s, file=stream),
             only_words=self.only_words,
         )
-        return stream.getvalue()
+        output = stream.getvalue()
+        if self.message:
+            output = f"{self.message}\n{output}"
+        return output
