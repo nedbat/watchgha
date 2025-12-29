@@ -1,5 +1,5 @@
 | |kit| |versions|
-| |sponsor| |bluesky-nedbat| |mastodon-nedbat|
+| |sponsor| |mastodon-nedbat| |bluesky-nedbat|
 
 ########################
 Watch GitHub Action runs
@@ -189,16 +189,16 @@ Changelog
 =========
 
 .. Release process:
+    - Use `make check_release` to see if everything is ready for a release.
     - This changelog is updated manually, not with scriv.
     - Bump the version in src/watchgha/__init__.py
     - Comments are added manually to GitHub issues and pull requests.
-    - Use `make check_release` to see if everything is ready for a release.
     - Use `make release` to release a new version.
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.6.0 – 2025-12-29
+------------------
 
 - Progress is displayed in the terminal with OSC 9;4 escape sequences.
 
