@@ -5,7 +5,7 @@
 Watch GitHub Action runs
 ########################
 
-This package provides one command, ``watch_gha_runs``.  It displays the status
+This package provides one command, ``watchgha``.  It displays the status
 of the latest GitHub Action runs on your current branch.  If any of the runs
 are in progress, it will refresh the display repeatedly with the latest status.
 
@@ -21,9 +21,25 @@ I suggest installing with `pipx`_:
 
     $ pipx install watchgha
 
-Now you have a command ``watch_gha_runs`` available.  It will check all GitHub
+or with `uv tool`_:
+
+.. code-block:: shell
+
+    $ uv tool install watchgha
+
+Now you have a ``watchgha`` command available.  It will check all GitHub
 remotes for the current directory's repo, and find action runs for the current
 branch.
+
+Alternatively, you can run the command directly with `uvx`_:
+
+.. code-block:: shell
+
+    $ uvx watchgha
+
+
+Running
+=======
 
 For complex defaulting, you can use a `git alias`_.  For example, this provides
 similar defaults, but can be adapted:
@@ -32,7 +48,7 @@ similar defaults, but can be adapted:
 
     [alias]
         runs = "!f() { \
-            watch_gha_runs $@ \
+            watchgha $@ \
                 \"$(git remote get-url origin)\" \
                 \"$(git rev-parse --abbrev-ref HEAD)\"; \
         }; f"
@@ -51,6 +67,7 @@ If you use GitHub Enterprise, you can set the environment variables
 ``GITHUB_API_URL`` (default: ``https://api.github.com``)
 to match your instance.
 
+
 Usage
 =====
 
@@ -58,7 +75,7 @@ Usage
     import os
     import subprocess
     import textwrap
-    command = "watch_gha_runs --help".split()
+    command = "watchgha --help".split()
     env = dict(os.environ, COLUMNS="72")
     output = subprocess.check_output(command, env=env)
     print()
@@ -70,8 +87,8 @@ Usage
 
 .. code-block::
 
-    $ watch_gha_runs --help
-    Usage: watch_gha_runs [OPTIONS] [REPO] [BRANCH]
+    $ watchgha --help
+    Usage: watchgha [OPTIONS] [REPO] [BRANCH]
 
       Watch GitHub Action runs.
 
@@ -95,7 +112,7 @@ Usage
                                 screen.
       --help                    Show this message and exit.
 
-.. [[[end]]] (sum: 9LxE5cjkve)
+.. [[[end]]] (sum: pz0pbDiNQd)
 
 
 Display
@@ -111,12 +128,12 @@ row of bullets indicating the number of steps, and which is current:
       - comment out python versions in testsuite.yml to have five.
       - commit as "fix: most awesome fix"
       create window 80x24
-      $ g ampf; asciinema rec --overwrite watch.cast --command "watch_gha_runs --wait-for-start --poll=5"
+      $ g ampf; asciinema rec --overwrite watch.cast --command "watchgha --wait-for-start --poll=5"
       $ agg --speed=10 --font-family="Monego,Symbola" --font-size=18 watch.cast --renderer=fontdue watch.gif
 
 .. image:: https://raw.githubusercontent.com/nedbat/watchgha/main/watch.gif
 
-(This is sped up, watch_gha_runs won't make your GitHub actions run faster!)
+(This is sped up, watchgha won't make your GitHub actions run faster!)
 
 .. code-block::
 
@@ -197,11 +214,20 @@ Changelog
 
 .. scriv-start-here
 
+Unreleased
+----------
+
+- The command is now `watchgha`, not `watch_gha_runs`.  The old command will
+  still work, but prints a deprecation warning with a delay. It will eventually
+  be removed. Making the command match the package name reduces confusion, and
+  makes ``uvx watchgha`` work, closing `issue 28`_.
+
+.. _issue 28: https://github.com/nedbat/watchgha/issues/28
+
 2.6.0 – 2025-12-29
 ------------------
 
 - Progress is displayed in the terminal with OSC 9;4 escape sequences.
-
 
 2.5.0 – 2025-12-13
 ------------------
@@ -424,6 +450,9 @@ choices. So I wrote my own.
 .. _gh run command: https://cli.github.com/manual/gh_run
 .. _git alias: https://www.atlassian.com/git/tutorials/git-alias
 .. _pipx: https://pypi.org/project/pipx/
+.. _uv tool: https://docs.astral.sh/uv/guides/tools/#installing-tools
+.. _uvx: https://docs.astral.sh/uv/guides/tools/#running-tools
+
 
 .. |kit| image:: https://img.shields.io/pypi/v/watchgha
     :target: https://pypi.org/project/watchgha/

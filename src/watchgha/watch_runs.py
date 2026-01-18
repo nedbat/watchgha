@@ -13,8 +13,10 @@ import os
 import re
 import signal
 import sys
+import time
 import urllib.parse
 
+from datetime import datetime
 from os.path import isdir
 
 import click
@@ -109,6 +111,21 @@ def main(sha, poll, wait, only, message, repo, branch):
     )
 
     watcher.watch(wait, poll, console)
+
+
+def old_main(*args, **kwargs):
+    """For backward compatibility with old entry point."""
+    deprecated_msg = (
+        "[red]Warning:[/] "
+        + "the [bold]watch_gha_runs[/] command is deprecated. "
+        + "Use [bold]watchgha[/] instead."
+    )
+    error_console.print(deprecated_msg)
+    deprecated_days = (datetime.now() - datetime(2026, 1, 18)).days
+    wait = 1 + (deprecated_days / 365) * 9
+    time.sleep(wait)
+    main(*args, **kwargs)
+    error_console.print(deprecated_msg)
 
 
 def gha_urls(repo, branch=None, sha=None):
@@ -233,6 +250,7 @@ class GhaWatcher:
 
     def clear_terminal_progress(self):
         osc_9_4(0, 0)
+
 
 def osc_9_4(st, pr):
     sys.stdout.write(f"\033]9;4;{st};{pr}\033\\")

@@ -42,7 +42,8 @@ dynamic = ["version"]
 "Funding" = "https://github.com/sponsors/nedbat"
 
 [project.scripts]
-watch_gha_runs = "watchgha.watch_runs:main"
+watchgha = "watchgha.watch_runs:main"
+watch_gha_runs = "watchgha.watch_runs:old_main"
 
 [tool.setuptools.dynamic]
 version.attr = "watchgha.__version__"
