@@ -3,7 +3,7 @@
 build
 check-manifest
 cogapp
-coverage
+coverage[toml]
 pytest
 scriv
 twine

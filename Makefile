@@ -1,4 +1,4 @@
-.PHONY: help clean tools dist test_pypi pypi pipx
+.PHONY: help clean sterile
 
 .DEFAULT_GOAL := help
 
@@ -13,11 +13,26 @@ clean: 	## Remove stuff we don't need.
 	rm -fr .pytest_cache/
 	rm -f get_*.json get_index.txt
 
-tools:	## Install the development tools.
-	python -m pip install -U --upgrade-strategy=eager -r dev-requirements.txt
+sterile: clean	## Remove absolutely everything.
+	rm -fr .venv .tox
 
-test:	## Run the tests
+.PHONY: venv tools test
+
+venv: .venv	## Create a virtual environment in .venv
+.venv:
+	uv venv --python=3.9
+
+tools:	.venv ## Install the development tools.
+	uv pip install -e . -r dev-requirements.txt
+
+test:	tools ## Run the tests
 	TZ=GMT coverage run -m pytest
+
+coverage: test	## Generate and view the coverage report.
+	coverage report -m
+	coverage html
+
+.PHONY: dist test_pypi pypi pipx
 
 dist: 	## Build the distributions.
 	python -m build --sdist --wheel
@@ -30,7 +45,7 @@ pypi:	## Upload the built distributions to PyPI.
 	python -m twine upload --verbose dist/*
 
 pipx:	## Install locally as a command
-	pipx install --force -e .
+	uv tool install --force -e .
 
 .PHONY: cog_docs
 
@@ -57,7 +72,7 @@ check_release: _check_manifest _check_tree _check_readme _check_version	## Check
 	@echo "Release checks passed"
 
 _pip_install_e:
-	python -m pip install -q -e .
+	uv pip install -q -e .
 
 _check_manifest:
 	python -m check_manifest
