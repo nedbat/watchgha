@@ -23,7 +23,7 @@ venv: .venv	## Create a virtual environment in .venv
 	uv venv --python=3.9
 
 tools:	.venv ## Install the development tools.
-	uv pip install -e . -r dev-requirements.txt
+	uv pip install -e . --group=dev
 
 test:	tools ## Run the tests
 	TZ=GMT coverage run -m pytest

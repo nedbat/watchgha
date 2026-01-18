@@ -52,6 +52,17 @@ version.attr = "watchgha.__version__"
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
 
+[dependency-groups]
+dev = [
+    "build",
+    "check-manifest",
+    "cogapp",
+    "coverage[toml]",
+    "pytest",
+    "scriv",
+    "twine",
+]
+
 [tool.scriv]
 # Changelog management: https://pypi.org/project/scriv/
 format = "rst"
