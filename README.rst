@@ -214,13 +214,13 @@ Changelog
 
 .. scriv-start-here
 
-Unreleased
-----------
+2.7.0 – 2026-01-18
+------------------
 
-- The command is now `watchgha`, not `watch_gha_runs`.  The old command will
-  still work, but prints a deprecation warning with a delay. It will eventually
-  be removed. Making the command match the package name reduces confusion, and
-  makes ``uvx watchgha`` work, closing `issue 28`_.
+- The command is now ``watchgha``, not ``watch_gha_runs``.  The old command
+  will still work, but prints a deprecation warning with a delay. It will
+  eventually be removed. Making the command match the package name reduces
+  confusion, and makes ``uvx watchgha`` work, closing `issue 28`_.
 
 .. _issue 28: https://github.com/nedbat/watchgha/issues/28
 
